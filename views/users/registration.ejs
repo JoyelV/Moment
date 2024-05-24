@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Store - Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('/assets/images/banner/closeup-shot-modern-cool-black-digital-watch-with-brown-leather-strap.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .registration-wrap {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px; /* Adjust the width */
+            margin: 20px; /* Add margin */
+        }
+
+        .registration-wrap h2 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .error {
+            color: rgb(223, 75, 11);
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .image-container {
+            width: 400px; /* Adjust the width */
+            margin: 20px; /* Add margin */
+            border-radius: 10px; /* Add border radius */
+            overflow: hidden;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto; /* Ensure aspect ratio is maintained */
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="registration-wrap">
+            <h2>SIGN UP</h2>
+            <%  if(typeof message !=='undefined'){ %>
+            <h6 style="color:green"><%= message %></h6>
+            <% } %> 
+            <p class="text-muted text-center">Please fill in the following details to sign up</p>
+            <form id="registrationForm" action="/register" method="post" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label for="name" class="label">Name <span>*</span></label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                    <div id="name-error" class="error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="label">Email address <span>*</span></label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                    <div id="email-error" class="error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="mobile" class="label">Mobile Number <span>*</span></label>
+                    <input type="text" class="form-control" id="mobileno" name="mobile" required>
+                    <div id="mobileno-error" class="error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="userpassword" class="label">Password <span>*</span></label>
+                    <input type="password" class="form-control" id="userpassword" name="password" required>
+                    <div id="userpassword-error" class="error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmpassword" class="label">Confirm Password <span>*</span></label>
+                    <input type="password" class="form-control" id="confirmpassword" name="confirm_password" required>
+                    <div id="confirmpassword-error" class="error"></div>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="referral" name="referral" placeholder="Referral Code (optional)">Refferal Code</div>
+                <button class="btn btn-primary" type="submit">Sign Up</button>
+            </form>
+            <div class="login-link">
+                <p>Already have an account? <a href="/login">Log in</a></p>
+            </div>
+        </div>
+
+    </div>
+
+
+<script>
+    // Validation functions for each input field
+    function validateName() {
+        var nameInput = document.getElementById("name");
+        var name = nameInput.value.trim();
+        var nameRegex = /^[A-Z][a-z]+ [A-Z][a-z]+$/;
+        if (!nameRegex.test(name)) {
+            showError("name", "Name must contain only characters with spaces between names.");
+            return false;
+        } else {
+            hideError("name");
+            return true;
+        }
+    }
+
+    function validatePassword() {
+        var passwordInput = document.getElementById("userpassword");
+        var password = passwordInput.value;
+        var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+        if (!passwordRegex.test(password)) {
+            showError("userpassword", "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long");
+            return false;
+        } else {
+            hideError("userpassword");
+            return true;
+        }
+    }
+
+    function validateConfirmPassword() {
+        var passwordInput = document.getElementById("userpassword");
+        var confirmPasswordInput = document.getElementById("confirmpassword");
+        var confirmPassword = confirmPasswordInput.value;
+        if (passwordInput.value !== confirmPassword) {
+            showError("confirmpassword", "Passwords do not match");
+            return false;
+        } else {
+            hideError("confirmpassword");
+            return true;
+        }
+    }
+
+    function validateEmail() {
+        var emailInput = document.getElementById("email");
+        var email = emailInput.value;
+        var emailRegex = /^[a-z0-9._%+-]+@gmail.com$/;
+        if (!emailRegex.test(email)) {
+            showError("email", "Please enter a valid email address");
+            return false;
+        } else {
+            hideError("email");
+            return true;
+        }
+    }
+
+    function validateMobile() {
+        var mobileInput = document.getElementById("mobileno");
+        var mobile = mobileInput.value.trim();
+        
+        // Regular expression for mobile number validation
+        var mobileRegex = /^(91)?[6-9]\d{9}$/;
+        
+        // Check for 10-digit number without country code
+        if (mobile.length === 10 && /^[6-9]\d{9}$/.test(mobile)) {
+            hideError("mobileno");
+            return true;
+        } 
+        // Check for 11-digit number with optional 0 at the front
+        else if (mobile.length === 11 && /^0[6-9]\d{9}$/.test(mobile)) {
+            hideError("mobileno");
+            return true;
+        }
+        // Check for 12-digit number with country code 91
+        else if (mobile.length === 12 && mobileRegex.test(mobile)) {
+            hideError("mobileno");
+            return true;
+        } 
+        // Display error for invalid cases
+        else {
+            showError("mobileno", "Please enter a valid mobile number starting with a digit from 6 to 9");
+            return false;
+        }
+    }
+
+    function showError(inputId, message) {
+        var errorElement = document.getElementById(inputId + "-error");
+        if (!errorElement) {
+            errorElement = document.createElement("div");
+            errorElement.id = inputId + "-error";
+            errorElement.className = "error-message";
+            document.getElementById(inputId).insertAdjacentElement("afterend", errorElement);
+        }
+        errorElement.textContent = message;
+    }
+    
+    function hideError(inputId) {
+        var errorElement = document.getElementById(inputId + "-error");
+        if (errorElement) {
+            errorElement.remove();
+        }
+    }
+
+    function validateForm() {
+        var isNameValid = validateName();
+        var isEmailValid = validateEmail();
+        var isMobileValid = validateMobile();
+        var isPasswordValid = validatePassword();
+        var isConfirmPasswordValid = validateConfirmPassword();
+
+        return isNameValid && isEmailValid && isMobileValid && isPasswordValid && isConfirmPasswordValid;
+    }
+</script>
+
+</body>
+</html>

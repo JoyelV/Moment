@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Store</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-NZxVqk6j1hmb0RPnig+BBkoLWZRS7AvtKTzZKTE5RGuRJFLa3IM+cHBJMS0q5WpI" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa; /* Light gray background */
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 400px; /* Reduced container width for better readability */
+        margin: 50px auto;
+        background-color: #ffffff; /* White background */
+        padding: 30px; /* Increased padding for better spacing */
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle box shadow */
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #343a40; /* Dark gray heading color */
+    }
+
+    .message {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        padding: 15px; /* Increased padding */
+        border-radius: 5px;
+        margin-bottom: 20px;
+        text-align: center; /* Center align message */
+    }
+
+    .form {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .input {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin-bottom: 20px; /* Increased margin for better spacing */
+        border: 1px solid #ced4da; /* Light gray border */
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .btn {
+        width: 100%; /* Full width button */
+        padding: 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Smooth hover transition */
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    .link {
+        display: block;
+        text-align: center;
+        color: #6c757d; /* Gray link color */
+        text-decoration: none;
+        margin-top: 10px;
+    }
+
+    .link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="container">
+    <h1>Forget</h1>
+
+    <% if(typeof message !== 'undefined'){ %>
+    <div class="message">
+        <h4><%= message %></h4>
+    </div>
+    <% } %>
+
+    <form action="/forget" method="post" class="form">
+        <input type="email" name="email" required placeholder="Enter your email" class="input">
+        <input type="submit" value="Send Reset Link" class="btn">
+        <a href="/login">Go back to Login</a></p>
+    </form>
+
+</div>
+
+</body>
+</html>
