@@ -251,6 +251,7 @@ try {
 
                     req.session.user_id=userData._id;
                     console.log("user_id:",req.session.user_id);
+                    console.log("session:",req.session);
                     const product= await productModel.find({ is_deleted: { $ne:'true'}}).limit(4);
                     await User.findByIdAndUpdate({_id:userData._id},{$set:{status:1}});
                     let userCart = await cartModel.findOne({ owner: req.session.user_id });
@@ -296,7 +297,6 @@ const loadHome = async(req,res)=>{
         
         if(req.session.passport){
         req.session.user_id = req.session.passport.user;
-        console.log("passport:",req.session.user_id);
         
         let userCart = await cartModel.findOne({ owner: req.session.user_id });
         if (!userCart) {
@@ -325,7 +325,7 @@ const userLogout = async(req, res) => {
     try {
         await User.findByIdAndUpdate({_id:req.session.user_id},{$set:{status:0}});
         req.session.destroy();
-        console.log("session destroyed",req.session);
+
         res.render('login',{message:"User logged out, please login to checkout our new arrivals"})
     } catch (error) {
         console.log(error.message);
@@ -469,7 +469,6 @@ const loadaddaddress = async(req,res)=>{
       try{
         
         const orders = await orderModel.find({ user: req.session.user_id }).sort({orderDate:-1}) || [];
-        console.log("orders in addaddress:",orders);
         res.render('addAddress',{orders});
 
       } catch(error){
@@ -790,7 +789,6 @@ const getRefferals = async(req, res) => {
     console.log(user);
 
     successfullRefferals = user.successfullRefferals.reverse();
-    console.log("SUCCESSFULL REFFERALS",successfullRefferals);
 
     res.render("refferals", {
       refferalCode: user.referralCode,
