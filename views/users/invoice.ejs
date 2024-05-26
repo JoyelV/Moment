@@ -206,7 +206,7 @@
                     %>
                     <tr>
                         <td colspan="3">Subtotal charges</td>
-                        <td class="text-end">₹<%= pdttotal %></td>
+                        <td class="text-end">₹<%= pdttotal %>.00</td>
                     </tr>
                     <tr>
                         <td colspan="3">Shipping charges</td>
@@ -219,13 +219,13 @@
                         </tr>
                     <% } else { %>
                         <tr>
-                            <td colspan="3">Discount (Code: <%= findOrder.coupon %>)</td>
-                            <td class="text-danger text-end">-₹<%= findOrder.discountPrice%></td>
+                            <td colspan="3">Coupon Discount (Code: <%= findOrder.coupon %>)</td>
+                            <td class="text-danger text-end">-₹<%= findOrder.discountPrice%>.00</td>
                         </tr>
                     <% } %>
                     <tr class="fw-bold">
                         <td colspan="3">TOTAL</td>
-                        <td class="text-end">₹<%= findOrder.billTotal + findOrder.deliveryCharges%></td>
+                        <td class="text-end">₹<%= pdttotal + findOrder.deliveryCharges%>.00</td>
                     </tr>
                 </tbody>
             </table>

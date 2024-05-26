@@ -810,22 +810,24 @@
                     <h3>Coupons</h3>
                     <div class="coupon_inner">
                         <% if (coupon && coupon.length > 0) { %>
-                            <h5>Available Coupons</h5><br>
                             <ul>
                                 <% coupon.forEach(couponItem => { %>
-                                    <li>
-                                        <% if (cart.coupon === "nil") { %>
-
-                                        <b>
-                                            <span class="coupon_code">Code:<%= couponItem.code %></span><br>
-                                            <span class="coupon_description">Description:<%= couponItem.description %></span><br>
-                                            <span class="coupon_description">Discount:<%=couponItem.                discountPercentage%>%Off</span>         <br>                                   
-                                        </b>
-                                        
-                                            <!-- Add Coupon Button -->
-                                            <a href="/addCouponToCart?code=<%= couponItem.code %>" class="btn btn-md btn-golden">Add Coupon</a>
-                                        <% } %>  
-                                    </li>
+                                    <% if (cart.billTotal >= couponItem.minimumAmount && cart.billTotal <= couponItem.maximumAmount) { %>
+                                        <li>
+                                            <% if (cart.coupon === "nil") { %>
+                                                <h5>Available Coupons</h5><br>
+                                                <b>
+                                                    <span class="coupon_code">Code: <%= couponItem.code %></span><br>
+                                                    <span class="coupon_description">Description: <%= couponItem.description %></span><br>
+                                                    <span class="coupon_description">Discount: <%= couponItem.discountPercentage %>% Off</span><br>                                   
+                                                </b>
+                                                <!-- Add Coupon Button -->
+                                                <a href="/addCouponToCart?code=<%= couponItem.code %>" class="btn btn-md btn-golden">Add Coupon</a>
+                                            <% } %>  
+                                        </li>
+                                    <% } else { %>
+                                        <p>No coupons available</p>
+                                    <% } %>  
                                 <% }); %>
                             </ul>
                         <% } else { %>
@@ -1272,10 +1274,10 @@
 
     <script>
         function changeQuantity(action, productId) {
-            console.log("I am called with productId:", productId); // Check if function is being called and productId is passed
+            console.log("I am called with productId:", productId); 
             if (!productId) {
                 console.error('Product ID is undefined.');
-                return; // Exit the function if productId is not provided
+                return; 
             }
         
             const url = action === 'increase' ? '/increaseQty' : '/decreaseQty';
@@ -1290,9 +1292,8 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log("Response message:", data.message); // Check response from server
+                console.log("Response message:", data.message); 
         
-                // Show sweet alert based on the response message
                 if (data.message === 'Maximum quantity reached') {
                     Swal.fire({
                         icon: 'warning',
@@ -1315,7 +1316,7 @@
                         confirmButtonText: 'OK'
                     });
                 } else {
-                    location.reload(); // Simple way to refresh the page and see the updated cart
+                    location.reload(); 
                 }
             })
             .catch((error) => {
@@ -1324,7 +1325,6 @@
         }
         </script>
 
-<!-- delete product -->
 <script>
     function removeProductCart(productId) {
         swal.fire({
@@ -1355,7 +1355,6 @@
                 })
                 .then((data) => {
                     if (data.success) {
-                        // Product removed successfully
                         swal.fire({
                             title: 'Product Removed',
                             text: '',
@@ -1364,13 +1363,12 @@
                             timer: 1500,
                             timerProgressBar: true,
                         }).then(() => {
-                          location.reload(); // Reload the page after successful removal
+                            window.location.href = `/cart`;
                         });
                     } 
 
                 })
                 .catch((error) => {
-                    // Handle errors during fetch
                     swal.fire('Error', 'An error occurred while removing the product.', 'error');
                     console.error('Fetch Error:', error);
                 });
@@ -1388,7 +1386,6 @@
             confirmButtonText: 'Go Shopping'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Redirect them to the shop page
                 window.location.href = '/shop';
             }
         });

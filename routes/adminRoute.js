@@ -77,7 +77,6 @@ admin_route.get("/searchStock", productController.searchStock);
 
 //order management
 admin_route.get('/order',auth.isLogin,adminController.loadorder);
-admin_route.get('/searchOrder',auth.isLogin,adminController.searchOrder);
 admin_route.get('/adminorderdetails',auth.isLogin,adminController.loadorderdetails);
 admin_route.post('/acceptcancel',adminController.requestAccept);
 admin_route.post('/rejectcancel',adminController.requestCancel);

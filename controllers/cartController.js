@@ -95,6 +95,20 @@ const addCouponToCart = async (req, res) => {
         await coupon.save();
         }
 
+        var couponApplied = await couponModel.findOne({code:userCart.coupon});
+        console.log("null",couponApplied)
+        if (userCart.coupon === 'nil'){
+            console.log("cart.coupon",cart.coupon)
+        }else{
+            if(coupon.maximumAmount<userCart.billTotal){
+                userCart.coupon = 'nil';
+                console.log("cart.coupon",userCart.coupon)
+                await userCart.save();
+             }
+        }
+        
+        console.log("cart coupn",userCart.coupon)
+
         const updatedUserCart = await cartModel.findOne({ owner: userId }).populate({ path: 'items.productId', model: 'Products' });
 
         const coupons = await couponModel.find();
@@ -239,7 +253,7 @@ const increaseQuantity = async (req, res) => {
         const { productId } = req.body;
         const userId = req.session.user_id;
         
-        const cart = await cartModel.findOne({ owner: userId }).populate({ path: 'items.productId', model: 'Products' });
+        let cart = await cartModel.findOne({ owner: userId }).populate({ path: 'items.productId', model: 'Products' });
         if (!cart) {
             return res.status(404).json({ message: 'Cart not found' });
         }
@@ -267,15 +281,25 @@ const increaseQuantity = async (req, res) => {
 
         var productOfferDiscountPrice = item.productId.discountPrice - (item.productId.discountPrice*specialDiscount)/100;
 
-        console.log("productOfferDiscountPrice:",productOfferDiscountPrice);
-
         item.price = item.quantity * productOfferDiscountPrice;
-
         cart.billTotal = cart.items.reduce((total, item) => total + item.price, 0);
+        var coupon = await couponModel.findOne({code:cart.coupon});
+        console.log("null",coupon)
+        if (cart.coupon === 'nil'){
+            console.log("cart.coupon",cart.coupon)
+        }else{
+            if(coupon.maximumAmount<cart.billTotal){
+                cart.coupon = 'nil';
+                console.log("cart.coupon",cart.coupon)
+                await cart.save();
+             }
+        }
+        
+        console.log("cart coupn",cart.coupon)
 
         await cart.save();
 
-        console.log(cart);
+        await console.log(cart);
         return res.status(200).json({ message: 'Quantity increased', cart });
     } catch (err) {
         console.error(err.message);
@@ -336,11 +360,12 @@ const deleteCart = async (req, res) => {
             if (!userCart) {
                 return res.status(404).json({ message: 'Cart not found' });
             }
-    
+            userCart.coupon = 'nil';
+
             const existingCartItemIndex = userCart.items.findIndex(item => item.productId.toString() === productId);
             if (existingCartItemIndex > -1) {
-                userCart.items.splice(existingCartItemIndex, 1);
-              userCart.coupon = "nil";
+              userCart.items.splice(existingCartItemIndex, 1);
+              await cartModel.findOneAndUpdate({ owner: req.session.user_id },{$set:{coupon:"nil"}});
 
                 userCart.billTotal = userCart.items.reduce((total, item) => {
                     let itemPrice = Number(item.price); 
@@ -350,6 +375,8 @@ const deleteCart = async (req, res) => {
                     return total + (isNaN(itemTotal) ? 0 : itemTotal);
                 }, 0);
 
+                console.log("cart.coupon",userCart.coupon);
+             
                 await userCart.save();
                 return res.status(200).json({ success: true, message: 'Item removed from cart' });
             } else {

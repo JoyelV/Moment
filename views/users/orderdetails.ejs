@@ -884,7 +884,7 @@
                 
                 <hr>
                 <a href="/userprofile" class="btn btn-warning" data-abc="true"> <i class="fa fa-chevron-left"></i> Back to Orders</a>
-                <% if(order.status === 'Pending'||order.status === 'Shipped'||order.status === 'Processing'){%>
+                <% if(order.status === 'Pending'&&order.paymentStatus !== 'Failed'||order.status === 'Shipped'&&order.paymentStatus !== 'Failed'||order.status === 'Processing'&&order.paymentStatus !== 'Failed'){%>
                         <button class="btn btn-warning" onclick="cancelOrder('<%= order.oId %>')" data-abc="true">
                             <i class="fa fa-chevron-left"></i> Cancel Order
                         </button>

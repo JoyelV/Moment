@@ -157,46 +157,47 @@
                 <div class="col-lg-6">
                     <div class="card mb-4">
                         <div class="card-header">
-                            <h4>Edit Category offer</h4>
+                            <h4>Edit Category Offer</h4>
                         </div>
                         <div class="card-body">
-                            <div class="mx-auto"> 
+                            <div class="mx-auto">
                                 <form action="/admin/updateCategoryOffer?catId=<%= offerDetails._id %>" id="catOfferForm" method="post">
-                                  <% if(locals.offerDetails){%>
+                                    <% if(locals.offerDetails){ %>
                                     <div class="mb-4">
-                                      <label for="product_name" class="form-label">Offer Name</label>
-                                      <input  type="text" name="name" placeholder="Type here" class="form-control" id="name" value="<%= offerDetails.name %>">
-                                      <div id="catOfferName-error" class="error-message"></div>
-                                  </div>
-                                  <div class="mb-4">
-                                    <label class="form-label">Starting Date</label>
-                                    <input id="catStartingDate" name="startingDate" type="date" class="form-control" value="<%= offerDetails.startingDate.toISOString().split('T')[0] %>">
-                                    <div id="catStartingDate-error" class="error-message"></div>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Ending Date</label>
-                                    <input id="catEndingDate" name="endingDate" type="date" class="form-control" value="<%= offerDetails.endingDate.toISOString().split('T')[0] %>">
-                                    <div id="catEndingDate-error" class="error-message"></div>
-                                </div> 
-                                  <div class="mb-4">
-                                      <label class="form-label">Category</label>
-                                      <select class="form-select" name="category">
-                                          <% if(locals.categoryData) { %>
-                                              <% for(let i = 0; i < categoryData.length; i++) { %>
-                                                      <option value="<%= categoryData[i]._id %>" <% if (categoryData[i].name === offerDetails.categoryOffer.categoryName) { %>selected<% } %>>
-                                                        <%= categoryData[i].name %></option>
-                                              <% } %>
-                                          <% } %>
-                                      </select>
-                                      <p><span id="error6" style="display: none;" class="mt-15 err text-danger"></span></p>
-                                  </div>
-                                  <div class="mb-4">
-                                      <label class="form-label">Category Discount</label>
-                                      <input placeholder="Type here" name="categoryDiscount" class="form-control" id="categoryDiscount" value="<%= offerDetails.categoryOffer.discount %>">
-                                      <div id="catDiscount-error" class="error-message"></div>
-                                  </div>
-                                  <button type="submit" class="btn ms-auto d-block btn-primary btn-md rounded font-sm hover-up">Update</button>                     
-                                    <%} %>                                
+                                        <label for="name" class="form-label">Offer Name</label>
+                                        <input type="text" name="name" placeholder="Type here" class="form-control" id="name" value="<%= offerDetails.name %>">
+                                        <div id="catOfferName-error" class="error-message text-danger"></div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Starting Date</label>
+                                        <input id="catStartingDate" name="startingDate" type="date" class="form-control" value="<%= offerDetails.startingDate.toISOString().split('T')[0] %>">
+                                        <div id="catStartingDate-error" class="error-message text-danger"></div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Ending Date</label>
+                                        <input id="catEndingDate" name="endingDate" type="date" class="form-control" value="<%= offerDetails.endingDate.toISOString().split('T')[0] %>">
+                                        <div id="catEndingDate-error" class="error-message text-danger"></div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Category</label>
+                                        <select class="form-select" name="category">
+                                            <% if(locals.categoryData) { %>
+                                            <% for(let i = 0; i < categoryData.length; i++) { %>
+                                            <option value="<%= categoryData[i]._id %>" <% if (categoryData[i].name === offerDetails.categoryOffer.categoryName) { %>selected<% } %>>
+                                                <%= categoryData[i].name %>
+                                            </option>
+                                            <% } %>
+                                            <% } %>
+                                        </select>
+                                        <div id="category-error" class="error-message text-danger"></div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Category Discount</label>
+                                        <input type="text" placeholder="Type here" name="categoryDiscount" class="form-control" id="categoryDiscount" value="<%= offerDetails.categoryOffer.discount %>">
+                                        <div id="catDiscount-error" class="error-message text-danger"></div>
+                                    </div>
+                                    <button type="submit" class="btn ms-auto d-block btn-primary btn-md rounded font-sm hover-up">Update</button>
+                                    <% } %>
                                 </form>
                             </div>
                         </div>
@@ -204,12 +205,13 @@
                 </div>
             </div>
         </section>
+
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">
                 <div class="col-sm-6">
                     <script>
-                    document.write(new Date().getFullYear())
-                    </script> ©, Evara - HTML Ecommerce Template .
+                        document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template.
                 </div>
                 <div class="col-sm-6">
                     <div class="text-sm-end">
@@ -219,6 +221,7 @@
             </div>
         </footer>
     </main>
+
     <script src="adminassets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="adminassets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="adminassets/js/vendors/select2.min.js"></script>
@@ -227,49 +230,85 @@
     <!-- Main Script -->
     <script src="adminassets/js/main.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('catOfferForm');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('catOfferForm');
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent form submission
-        
-        // Perform form validation
-        const name = document.getElementById('name').value;
-        const startingDate = document.getElementById('catStartingDate').value;
-        const endingDate = document.getElementById('catEndingDate').value;
-        const categoryDiscount = document.getElementById('categoryDiscount').value;
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
 
-        // Example validation checks (replace with your own logic)
-        if (name.trim() === '') {
-            showError('Name is required');
-        } else if (startingDate === '' || endingDate === '') {
-            showError('Starting and Ending dates are required');
-        } else if (categoryDiscount.trim() === '' || isNaN(categoryDiscount)) {
-            showError('Category Discount must be a number');
-        } else {
-            // If form is valid, submit it
-            form.submit();
+                const name = document.getElementById('name').value.trim();
+                const startingDate = document.getElementById('catStartingDate').value;
+                const endingDate = document.getElementById('catEndingDate').value;
+                const category = form.category.value;
+                const categoryDiscount = document.getElementById('categoryDiscount').value.trim();
+                const invalidPattern = /[!@#$%^&*(),.?":{}|<>0-9]/;
+                const specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/;
+
+                let isValid = true;
+
+                if (name === '') {
+                    showError('catOfferName-error', 'Offer Name is required');
+                    isValid = false;
+                } else if (invalidPattern.test(name)) {
+                    showError('catOfferName-error', 'Offer Name should not contain special characters or numbers');
+                    isValid = false;
+                } else {
+                    clearError('catOfferName-error');
+                }
+
+                if (startingDate === '') {
+                    showError('catStartingDate-error', 'Starting Date is required');
+                    isValid = false;
+                } else {
+                    clearError('catStartingDate-error');
+                }
+
+                if (endingDate === '') {
+                    showError('catEndingDate-error', 'Ending Date is required');
+                    isValid = false;
+                } else {
+                    clearError('catEndingDate-error');
+                }
+
+                if (category === '') {
+                    showError('category-error', 'Category is required');
+                    isValid = false;
+                } else {
+                    clearError('category-error');
+                }
+
+                if (categoryDiscount === '' || isNaN(categoryDiscount)) {
+                    showError('catDiscount-error', 'Category Discount must be a valid number');
+                    isValid = false;
+                } else if (specialCharPattern.test(categoryDiscount)) {
+                    showError('catDiscount-error', 'Category Discount should not contain special characters or letters');
+                    isValid = false;
+                } else if (categoryDiscount < 0 || categoryDiscount > 100) {
+                    showError('catDiscount-error', 'Category Discount must be between 0 and 100');
+                    isValid = false;
+                 } else {
+                    clearError('catDiscount-error');
+                }
+
+                if (isValid) {
+                    form.submit();
+                }
+            });
+        });
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
         }
-    });
-});
 
-function showError(message) {
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'alert alert-danger';
-    errorDiv.textContent = message;
-
-    const form = document.getElementById('catOfferForm');
-    form.parentNode.insertBefore(errorDiv, form);
-    
-    setTimeout(function() {
-        errorDiv.remove();
-    }, 3000); 
-}
-
-</script>
+        function clearError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = '';
+        }
+    </script>
 </body>
 
 </html>

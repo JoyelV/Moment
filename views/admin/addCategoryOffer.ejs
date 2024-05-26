@@ -163,19 +163,19 @@
                             <div class="mx-auto"> 
                                 <form action="/admin/postCategoryOffer" id="catOfferForm" method="post">
                                     <div class="mb-4">
-                                        <label for="product_name" class="form-label">Offer Name</label>
+                                        <label for="name" class="form-label">Offer Name</label>
                                         <input type="text" name="name" placeholder="Type here" class="form-control" id="name">
-                                        <div id="catOfferName-error" class="error-message"></div>
+                                        <div id="catOfferName-error" class="error-message text-danger"></div>
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Starting Date</label>
                                         <input id="catStartingDate" name="startingDate" type="date" placeholder="mm/dd/yy" class="form-control">
-                                        <div id="catStartingDate-error" class="error-message"></div>
+                                        <div id="catStartingDate-error" class="error-message text-danger"></div>
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Ending Date</label>
                                         <input id="catEndingDate" name="endingDate" type="date" placeholder="mm/dd/yy" class="form-control">
-                                        <div id="catEndingDate-error" class="error-message"></div>
+                                        <div id="catEndingDate-error" class="error-message text-danger"></div>
                                     </div>
                                     
                                    
@@ -188,12 +188,12 @@
                                                 <% } %>
                                             <% } %>
                                         </select>
-                                        <p><span id="error6" style="display: none;" class="mt-15 err text-danger"></span></p>
+                                        <div id="category-error" class="error-message text-danger"></div>
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Category Discount</label>
-                                        <input placeholder="Type here" name="categoryDiscount" class="form-control" id="categoryDiscount">
-                                        <div id="catDiscount-error" class="error-message"></div>
+                                        <input type="text" placeholder="Type here" name="categoryDiscount" class="form-control" id="categoryDiscount">
+                                        <div id="catDiscount-error" class="error-message text-danger"></div>
                                     </div>
                                     <button type="submit" class="btn ms-auto d-block btn-md rounded font-sm hover-up">Add Offer</button>
                                 </form>
@@ -226,52 +226,85 @@
     <!-- Main Script -->
     <script src="adminassets/js/main.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('catOfferForm');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('catOfferForm');
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent form submission
-        
-        // Perform form validation
-        const name = document.getElementById('name').value;
-        const startingDate = document.getElementById('catStartingDate').value;
-        const endingDate = document.getElementById('catEndingDate').value;
-        const categoryDiscount = document.getElementById('categoryDiscount').value;
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
 
-        // Example validation checks (replace with your own logic)
-        if (name.trim() === '') {
-            showError('Name is required');
-        } else if (startingDate === '' || endingDate === '') {
-            showError('Starting and Ending dates are required');
-        } else if (categoryDiscount.trim() === '' || isNaN(categoryDiscount)) {
-            showError('Category Discount must be a number');
-        } else {
-            // If form is valid, submit it
-            form.submit();
+                const name = document.getElementById('name').value.trim();
+                const startingDate = document.getElementById('catStartingDate').value;
+                const endingDate = document.getElementById('catEndingDate').value;
+                const category = form.category.value;
+                const categoryDiscount = document.getElementById('categoryDiscount').value.trim();
+                const invalidPattern = /[!@#$%^&*(),.?":{}|<>0-9]/;
+                const specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/;
+
+                let isValid = true;
+
+                if (name === '') {
+                    showError('catOfferName-error', 'Offer Name is required');
+                    isValid = false;
+                } else if (invalidPattern.test(name)) {
+                    showError('catOfferName-error', 'Offer Name should not contain special characters or numbers');
+                    isValid = false;
+                } else {
+                    clearError('catOfferName-error');
+                }
+
+                if (startingDate === '') {
+                    showError('catStartingDate-error', 'Starting Date is required');
+                    isValid = false;
+                } else {
+                    clearError('catStartingDate-error');
+                }
+
+                if (endingDate === '') {
+                    showError('catEndingDate-error', 'Ending Date is required');
+                    isValid = false;
+                } else {
+                    clearError('catEndingDate-error');
+                }
+
+                if (category === '') {
+                    showError('category-error', 'Category is required');
+                    isValid = false;
+                } else {
+                    clearError('category-error');
+                }
+
+                if (categoryDiscount === '' || isNaN(categoryDiscount)) {
+                    showError('catDiscount-error', 'Category Discount must be a valid number');
+                    isValid = false;
+                } else if (specialCharPattern.test(categoryDiscount)) {
+                    showError('catDiscount-error', 'Category Discount should not contain special characters or letters');
+                    isValid = false;
+                } else if (categoryDiscount < 0 || categoryDiscount > 100) {
+                    showError('catDiscount-error', 'Category Discount must be between 0 and 100');
+                    isValid = false;
+                 } else {
+                    clearError('catDiscount-error');
+                }
+
+                if (isValid) {
+                    form.submit();
+                }
+            });
+        });
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
         }
-    });
-});
 
-function showError(message) {
-    // Display error message to the user (you can customize this as needed)
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'alert alert-danger';
-    errorDiv.textContent = message;
-
-    // Insert error message before the form
-    const form = document.getElementById('catOfferForm');
-    form.parentNode.insertBefore(errorDiv, form);
-    
-    // Clear error message after a delay (optional)
-    setTimeout(function() {
-        errorDiv.remove();
-    }, 3000); // Remove error message after 3 seconds
-}
-
-</script>
+        function clearError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = '';
+        }
+    </script>
 </body>
 
 </html>

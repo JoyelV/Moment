@@ -167,14 +167,17 @@
                 <div class="col-lg-9"> <!-- Adjusted to take up 9 columns -->
                     <div class="card mb-4">
                         <div class="card-header">
-                            <form action="/admin/searchOrder" method="GET">
+                            <form id="searchForm" action="/admin/order" method="GET">
                                 <div class="input-group">
-                                    <input type="search" class="form-control" placeholder="Search by username,OrderID or order status" name="q">
+                                    <input type="search" class="form-control" placeholder="Search by username, OrderID or order status" name="q">
+                                    <!-- Include hidden input field for current page -->
+                                    <input type="hidden" name="page" value="<%= currentPage %>">
                                     <div class="input-group-append">
                                         <button type="submit" class="btn btn-lg btn-secondary" style="height: 45px;">Search</button>
                                     </div>
                                 </div>
                             </form>
+                                                       
                         </div>
                     </div>
                 </div>
@@ -250,7 +253,7 @@
     <ul class="pagination">
         <% if (currentPage > 1) { %>
             <li class="page-item">
-                <a class="page-link" href="/admin/order?page=<%= currentPage - 1 %>" aria-label="Previous">
+                <a class="page-link" href="/admin/order?q=<%= query %>&page=<%= currentPage - 1 %>" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
@@ -258,13 +261,13 @@
         
         <% for (let i = 1; i <= totalPages; i++) { %>
             <li class="page-item">
-                <a class="page-link <% if (currentPage === i) { %> active <% } %>" href="/admin/order?page=<%= i %>"><%= i %></a>
+                <a class="page-link <% if (currentPage === i) { %> active <% } %>" href="/admin/order?q=<%= query %>&page=<%= i %>"><%= i %></a>
             </li>
         <% } %>
         
         <% if (currentPage < totalPages) { %>
             <li class="page-item">
-                <a class="page-link" href="/admin/order?page=<%= currentPage + 1 %>" aria-label="Next">
+                <a class="page-link" href="/admin/order?q=<%= query %>&page=<%= currentPage + 1 %>" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
@@ -294,33 +297,6 @@
     <script src="adminassets/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="adminassets/js/main.js" type="text/javascript"></script>
-
-    <script>
-        const searchForm = document.querySelector('form[action="/admin/searchOrder"]');
-
-        const searchInput = searchForm.querySelector('input[name="q"]');
-        const errorMessage = document.createElement('div');
-        errorMessage.classList.add('error-message');
-        errorMessage.style.display = 'none';
-        searchInput.parentNode.appendChild(errorMessage);
-
-        searchForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const inputValue = searchInput.value;
-
-            if (!/^[A-Z]/.test(inputValue)) {
-                errorMessage.textContent = 'Please start your search with an uppercase letter.';
-                errorMessage.style.display = 'block';
-            } else {
-                searchForm.submit();
-            }
-        });
-
-        searchInput.addEventListener('input', function(event) {
-            errorMessage.style.display = 'none';
-        });
-    </script>
     
 </body>
 

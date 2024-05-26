@@ -239,70 +239,86 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('prdOfferForm');
+        const form = document.getElementById('prdOfferForm');
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent form submission
-        
-        // Perform form validation
-        const name = document.getElementById('name').value;
-        const startingDate = document.getElementById('prdStartingDate').value;
-        const endingDate = document.getElementById('prdEndingDate').value;
-        const productDiscount = document.getElementById('productDiscount').value;
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+            
+            // Perform form validation
+            const name = document.getElementById('name').value.trim();
+            const startingDate = document.getElementById('prdStartingDate').value.trim();
+            const endingDate = document.getElementById('prdEndingDate').value.trim();
+            const productDiscount = document.getElementById('productDiscount').value.trim();
 
-        // Reset previous error messages
-        clearErrors();
+            // Reset previous error messages
+            clearErrors();
 
-        let isValid = true;
+            let isValid = true;
 
-        // Validate name
-        if (name.trim() === '') {
-            showError('prdOfferName-error', 'Name is required');
-            isValid = false;
-        }
+            // Validate name
+            if (name === '') {
+                showError('prdOfferName-error', 'Name is required');
+                isValid = false;
+            } else if (!isValidName(name)) {
+                showError('prdOfferName-error', 'Name should only contain letters and spaces');
+                isValid = false;
+            }
 
-        // Validate starting date
-        if (startingDate === '') {
-            showError('prdStartingDate-error', 'Starting Date is required');
-            isValid = false;
-        }
+            // Validate starting date
+            if (startingDate === '') {
+                showError('prdStartingDate-error', 'Starting Date is required');
+                isValid = false;
+            }
 
-        // Validate ending date
-        if (endingDate === '') {
-            showError('prdEndingDate-error', 'Ending Date is required');
-            isValid = false;
-        }
+            // Validate ending date
+            if (endingDate === '') {
+                showError('prdEndingDate-error', 'Ending Date is required');
+                isValid = false;
+            }
 
-        // Validate product discount
-        if (productDiscount.trim() === '' || isNaN(productDiscount)) {
-            showError('prdDiscount-error', 'Product Discount must be a number');
-            isValid = false;
-        }
+            // Validate product discount
+            if (productDiscount === '') {
+                showError('prdDiscount-error', 'Product Discount is required');
+                isValid = false;
+            } else if (isNaN(productDiscount)) {
+                showError('prdDiscount-error', 'Product Discount must be a number');
+                isValid = false;
+            } else if (productDiscount < 0 || productDiscount > 100) {
+                showError('prdDiscount-error', 'Product Discount must be between 0 and 100');
+                isValid = false;
+            }
 
-        // If form is valid, submit it
-        if (isValid) {
-            form.submit();
-        }
+            // If form is valid, submit it
+            if (isValid) {
+                form.submit();
+            }
+        });
     });
-});
 
-function showError(id, message) {
-    const errorDiv = document.getElementById(id);
-    errorDiv.textContent = message;
-    errorDiv.style.display = 'block';
-}
+    function showError(id, message) {
+        const errorDiv = document.getElementById(id);
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
 
-function clearErrors() {
-    const errorDivs = document.querySelectorAll('.error-message');
-    errorDivs.forEach(function(errorDiv) {
+    function clearError(id) {
+        const errorDiv = document.getElementById(id);
         errorDiv.textContent = '';
         errorDiv.style.display = 'none';
-    });
-}
+    }
 
+    function clearErrors() {
+        const errorDivs = document.querySelectorAll('.error-message');
+        errorDivs.forEach(function(errorDiv) {
+            errorDiv.textContent = '';
+            errorDiv.style.display = 'none';
+        });
+    }
+
+    function isValidName(name) {
+        const regex = /^[a-zA-Z\s]+$/;
+        return regex.test(name);
+    }
 </script>
-
 </body>
-
-
 </html>

@@ -501,85 +501,70 @@ const loadCategory = async(req,res)=>{
 const loadorder = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1; 
-        const limit = 18; 
+        let query = req.query.q;
 
-        const totalOrders = await orderModel.countDocuments({});
-
-        const totalPages = Math.ceil(totalOrders / limit);
-        const skip = (page - 1) * limit;
-
-        const orders = await orderModel.find({}).populate('user').skip(skip).limit(limit).sort({createdAt:-1});
-
-        res.render('orders', { order: orders, currentPage: page, totalPages: totalPages });
-      
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).send('Internal Server Error');
-    }
-};
-
-const searchOrder = async (req, res) => {
-  try {
-    const { q, page } = req.query;
-    const currentPage = parseInt(page) || 1;
-    const limit = 8;
-    let filter = {};
-
-    if (q && q.toLowerCase() !== 'all') {
-      const users = await User.find({ name: { $regex: new RegExp(q, 'i') } });
-      const userIDs = users.map(user => user._id);
-
-      if (userIDs.length > 0) {
-        filter.user = { $in: userIDs };
-      } else {
-        switch (q) {
-          case 'Delivered':
-            filter.status = 'Delivered';
-            break;
-          case 'Pending':
-            filter.status = 'Pending';
-            break;
-          case 'Processing':
-            filter.status = 'Processing';
-            break;
-          case 'Shipped':
-            filter.status = 'Shipped';
-            break;
-          case 'Canceled':
-            filter.status = 'Canceled';
-            break;
-          case 'Returned':
-            filter.status = 'Returned';
-            break;
-          default:
-            filter.oId = q;
+        if (!query || query.trim() === '') {
+            query = 'All';
         }
+        const limit = 18; 
+        let filter = {};
+        const currentPage = parseInt(page) || 1;
+
+        if (query && query.toLowerCase() !== 'all') {
+          const users = await User.find({ name: { $regex: new RegExp(query, 'i') } });
+          const userIDs = users.map(user => user._id);
+    
+          if (userIDs.length > 0) {
+            filter.user = { $in: userIDs };
+          } else {
+            switch (query) {
+              case 'Delivered':
+                filter.status = 'Delivered';
+                break;
+              case 'Pending':
+                filter.status = 'Pending';
+                break;
+              case 'Processing':
+                filter.status = 'Processing';
+                break;
+              case 'Shipped':
+                filter.status = 'Shipped';
+                break;
+              case 'Canceled':
+                filter.status = 'Canceled';
+                break;
+              case 'Returned':
+                filter.status = 'Returned';
+                break;
+              default:
+                filter.oId = query;
+            }
+          }
+        }
+    
+        var totalOrders = await orderModel.countDocuments(filter);
+        if(!totalOrders){
+          totalOrders = await orderModel.countDocuments({});
+        }
+        const totalPages = Math.ceil(totalOrders / limit);
+        const adjustedCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
+        const skip = (adjustedCurrentPage - 1) * limit;
+    
+        const orders = await orderModel.find(filter)
+          .skip(skip)
+          .limit(limit)
+          .populate('user');
+    
+        res.render('orders', {
+          order: orders,
+          currentPage: adjustedCurrentPage,
+          totalPages,
+          query: query,
+        });
+      } catch (error) {
+        console.error("Error:", error.message);
+        res.status(500).send('Internal Server Error');
       }
-    }
-
-    var totalOrders = await orderModel.countDocuments(filter);
-    if(!totalOrders){
-      totalOrders = await orderModel.countDocuments({});
-    }
-    const totalPages = Math.ceil(totalOrders / limit);
-    const adjustedCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
-    const skip = (adjustedCurrentPage - 1) * limit;
-
-    const orders = await orderModel.find(filter)
-      .skip(skip)
-      .limit(limit)
-      .populate('user');
-
-    res.render('orders', {
-      order: orders,
-      currentPage: adjustedCurrentPage,
-      totalPages,
-      query: q,
-    });
-  } catch (error) {
-    console.error("Error:", error.message);
-    res.status(500).send('Internal Server Error');
-  }
 };
 
 const loadorderdetails = async(req,res)=>{
@@ -781,6 +766,5 @@ module.exports = {
     requestAccept,
     loadorderdetails,
     loadorder,
-    searchOrder,
     getChartData
 }
