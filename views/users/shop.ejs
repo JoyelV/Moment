@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="assets/css/style.min.css">
 
 <style>
-    .shop__sidebar__search .search-input {
+    .shop__sidebar__search .form-control {
     border: 2px solid #168ef0;
     padding: 8px; 
     border-radius: 20px; 
@@ -713,7 +713,8 @@
     <div id="search" class="search-modal">
         <button type="button" class="close">×</button>
         <form action="/search" method="GET"> <!-- Modified form action -->
-            <input type="search" placeholder="type product name here" name="q" /> <!-- Added name attribute for query string parameter -->
+            <input type="text" placeholder="Type product name here" name="q" /> <!-- Added name attribute for query string parameter -->
+            <input type="hidden" name="page" value="<%= currentPage %>">
             <button type="submit" class="btn btn-lg btn-golden">Search</button>
         </form>
     </div>
@@ -804,11 +805,11 @@
             Categories
         </button>
         <div class="dropdown-menu" aria-labelledby="categoriesDropdown">
-            <a href="/shop" class="dropdown-item">All</a>
+            <a href="/shop?q=<%= query %>&sort=<%= sort %>&category=&page=<%=currentPage %>"" class="dropdown-item">All</a>
             <% if (category.length > 0) { %>
                 <!-- Dynamic Categories -->
                 <% category.forEach(categoryItem => { %>
-                    <a href="/shop?category=<%= categoryItem._id %>" class="dropdown-item category-link" data-category-id="<%= categoryItem._id %>"><%= categoryItem.name %></a>
+                    <a href="/shop?q=<%= query %>&sort=<%= sort %>&category=<%= categoryItem._id %>&page=<%=currentPage %>" class="dropdown-item category-link" data-category-id="<%= categoryItem._id %>"><%= categoryItem.name %></a>
                 <% }); %>
             <% } else { %>
                 <a href="#" class="list-group-item list-group-item-action disabled">No categories available</a>
@@ -821,53 +822,40 @@
             Availability
         </button>
         <div class="dropdown-menu" aria-labelledby="availabilityDropdown">
-            <a href="/shop?sort=outOfStock" class="dropdown-item">Out of Stock</a>
-            <a href="/shop?sort=inStock" class="dropdown-item">In Stock</a>
+            <a href="/shop?q=<%= query %>&sort=outOfStock&category=<%= cate %>&page=<%=currentPage %>" class="dropdown-item">Out of Stock</a>
+            <a href="/shop?q=<%= query %>&sort=inStock&category=<%= cate %>&page=<%=currentPage %>" class="dropdown-item">In Stock</a>
         </div>
     </div>
 </div>
 
 <div class="shop__sidebar__search">
-    <form action="/shop" method="GET">
-        <input type="text" class="search-input" placeholder="Search product name or brand name here..." name="q">
-        <button type="submit" class="btn btn-lg btn-golden">Search</button>
+
+    <form id="searchForm" action="/shop?q=<%= query %>&sort=inStock&category=<%= cate %>&page=<%=currentPage %>" method="GET">
+        <div class="input-group">
+            <input type="search" class="form-control" placeholder="Search product name or brand name here..." name="q">
+            <!-- Include hidden input field for current page -->
+            <input type="hidden" name="page" value="<%= currentPage %>">
+                <button type="submit" class="btn btn-lg btn-golden" style="height: 45px;">Search</button>
+        </div>
     </form>
 </div>
-
-                                    
-                                    <!-- Sort Select Option -->
-                                    <!-- <div class="sort-select-list d-flex align-items-center">
-                                        <label class="mr-2">Sort By:</label>
-                                        <form action="/shop" method="GET">
-                                            <fieldset>
-                                                <select name="sort" id="speed" onchange="this.form.submit()">
-                                                    <option value="rating">Sort by average rating</option>
-                                                    <option value="newness">Sort by newness</option>
-                                                    <option value="priceAsc">Sort by price: low to high</option>
-                                                    <option value="priceDesc">Sort by price: high to low</option>
-                                                    <option value="nameAsc">Product Name: A - Z</option>
-                                                    <option value="nameDesc">Product Name: Z - A</option>
-                                                </select>
-                                            </fieldset>
-                                        </form>
-                                    </div> -->
-
-                                    <!-- Start Sort Select Option -->
-<div class="sort-select-list d-flex align-items-center">
-    <label class="mr-2">Sort By:</label>
-    <form action="/shop" method="GET">
-        <fieldset>
-            <select name="sort" id="sort" onchange="this.form.submit()">
-                <option value="rating">Sort by popularity(high rating)</option>
-                <option value="newness">Sort by new arrivals</option>
-                <option value="priceAsc">Sort by price: low to high</option>
-                <option value="priceDsc">Sort by price: high to low</option>
-                <option value="nameAsc">Product Name: A - Z</option>
-                <option value="nameDsc">Product Name: Z - A</option>
-            </select>
-        </fieldset>
-    </form>
+<!-- Start Sort Select Option -->
+<div class="filter-section" style="position: relative;">
+    <div class="dropdown">
+        <button class="btn btn-light dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false"style="min-width: 200px;">
+            Sort By:
+        </button>
+        <div class="dropdown-menu" aria-labelledby="sortDropdown">
+            <a href="/shop?q=<%= query %>&sort=rating&category=<%= cate %>&page=<%=currentPage %>" class="dropdown-item">Sort by popularity (rating)</a>
+            <a href="/shop?q=<%= query %>&sort=newness&category=<%= cate %>&page=<%=currentPage %>" class="dropdown-item">Sort by new arrivals</a>
+            <a href="/shop?q=<%= query %>&sort=priceAsc&category=<%= cate %>&page=<%=currentPage %>" class="dropdown-item">Sort by price: low to high</a>
+            <a href="/shop?q=<%= query %>&sort=priceDsc&category=<%= cate %>&page=<%=currentPage %>" class="dropdown-item">Sort by price: high to low</a>
+            <a href="/shop?q=<%= query %>&sort=nameAsc&category=<%= cate %>&page=<%=currentPage %>" class="dropdown-item">Product Name: A - Z</a>
+            <a href="/shop?q=<%= query %>&sort=nameDsc&category=<%= cate %>&page=<%=currentPage %>" class="dropdown-item">Product Name: Z - A</a>
+        </div>
+    </div>
 </div>
+
 <!-- End Sort Select Option -->
                                     <!-- End Sort Select Option -->
                                 </div>
@@ -1036,30 +1024,20 @@
                         </div>
                     </div> <!-- End Tab Wrapper -->
 
-                    <!-- Start Pagination -->
-<!-- <div class="page-pagination text-center" data-aos="fade-up" data-aos-delay="0">
-    <ul>
-        <% for (let i = 1; i <= totalPages; i++) { %>
-            <li>
-                <a <% if (currentPage === i) { %> class="active" <% } %> href="/shop?page=<%= i %>"><%= i %></a>
-            </li>
-        <% } %>
-        <% if (currentPage < totalPages) { %>
-            <li><a href="/shop?page=<%= currentPage + 1 %>"><i class="ion-ios-skipforward"></i></a></li>
-        <% } %>
-    </ul>
-</div>  -->
-
+<!-- Pagination -->
 <!-- Pagination -->
 <div class="page-pagination text-center" data-aos="fade-up" data-aos-delay="0">
     <ul>
+        <% if (currentPage > 1) { %>
+            <li><a href="/shop?q=<%= query %>&sort=<%= sort %>&category=<%= cate %>&page=<%= currentPage - 1 %>"><i class="ion-ios-skipback"></i></a></li>
+        <% } %>
         <% for (let i = 1; i <= totalPages; i++) { %>
             <li>
-                <a <% if (currentPage === i) { %> class="active" <% } %> href="/shop?page=<%= i %>"><%= i %></a>
+                <a <% if (currentPage === i) { %> class="active" <% } %> href="/shop?q=<%= query %>&sort=<%= sort %>&category=<%= cate %>&page=<%= i %>"><%= i %></a>
             </li>
         <% } %>
         <% if (currentPage < totalPages) { %>
-            <li><a href="/shop?page=<%= currentPage + 1 %>"><i class="ion-ios-skipforward"></i></a></li>
+            <li><a href="/shop?q=<%= query %>&sort=<%= sort %>&category=<%= cate %>&page=<%= currentPage + 1 %>"><i class="ion-ios-skipforward"></i></a></li>
         <% } %>
     </ul>
 </div>

@@ -264,11 +264,16 @@ async function isProductInWishlist(userId, productId) {
 const loadShop = async (req, res) => {
     try {
         const category = await categoryModel.find({});
-
+        let search = req.query.q;
+        let cate = req.query.category;
+        let sorted = req.query.sort;
         let query = {};
 
-        if (req.query.q) {
+        console.log(search,"Hii result")
+
+        if (search!=='all'||search!=='All') {
             const searchQuery = req.query.q;
+
             const searchCondition = {
                 $or: [
                     { brand: { $regex: searchQuery, $options: 'i' } },
@@ -276,6 +281,9 @@ const loadShop = async (req, res) => {
                 ]
             };
             query = { ...query, ...searchCondition };
+        }
+        if(search ==='all'||search==='All'){
+            query = {};
         }
 
         if (req.query.category) {
@@ -321,14 +329,18 @@ const loadShop = async (req, res) => {
                 sortOption = { name: 1 };
         }
 
-        const page = parseInt(req.query.page) || 1;
+        let page = parseInt(req.query.page) || 1;
         const limit = 6; 
         const totalPages = Math.ceil(totalProductsCount / limit);
+        if(totalPages<2){
+            page =  1;
+        }
         const skip = (page - 1) * limit;
 
         const products = await productModel.find(query).sort(sortOption).skip(skip).limit(limit);
+        console.log(query,"Hii query result")
 
-        res.render('shop', { product: products, category, totalPages, currentPage: page });
+        res.render('shop', { product: products, category, totalPages, currentPage: page,query: search,cate:cate,sort:sorted,currentPage:page });
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
