@@ -360,8 +360,8 @@
     
             if (discountPercentageInput.value.trim() === '') {
                 discountPercentageError.innerHTML = "Discount percentage is required";
-            } else if (isNaN(discountPercentage) || discountPercentage < 5 || discountPercentage > 75) {
-                discountPercentageError.innerHTML = "Discount percentage should be between 5% and 75%";
+            } else if (isNaN(discountPercentage) || discountPercentage < 5 || discountPercentage > 65) {
+                discountPercentageError.innerHTML = "Discount percentage should be between 5% and 65%";
             } else {
                 discountPercentageError.innerHTML = "";
             }

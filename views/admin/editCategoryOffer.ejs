@@ -286,8 +286,8 @@
                 } else if (specialCharPattern.test(categoryDiscount)) {
                     showError('catDiscount-error', 'Category Discount should not contain special characters or letters');
                     isValid = false;
-                } else if (categoryDiscount < 0 || categoryDiscount > 100) {
-                    showError('catDiscount-error', 'Category Discount must be between 0 and 100');
+                } else if (categoryDiscount < 0 || categoryDiscount > 40) {
+                    showError('catDiscount-error', 'Category Discount must be between 0 and 40');
                     isValid = false;
                  } else {
                     clearError('catDiscount-error');

@@ -275,8 +275,8 @@
             } else if (isNaN(productDiscount)) {
                 showError('prdDiscount-error', 'Product Discount must be a number');
                 isValid = false;
-            } else if (productDiscount < 0 || productDiscount > 100) {
-                showError('prdDiscount-error', 'Product Discount must be between 0 and 100');
+            } else if (productDiscount < 0 || productDiscount > 40) {
+                showError('prdDiscount-error', 'Product Discount must be between 0 and 40');
                 isValid = false;
             }
 

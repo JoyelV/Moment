@@ -242,20 +242,17 @@
         const form = document.getElementById('prdOfferForm');
 
         form.addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent form submission
+            event.preventDefault(); 
             
-            // Perform form validation
             const name = document.getElementById('name').value.trim();
             const startingDate = document.getElementById('prdStartingDate').value.trim();
             const endingDate = document.getElementById('prdEndingDate').value.trim();
             const productDiscount = document.getElementById('productDiscount').value.trim();
 
-            // Reset previous error messages
             clearErrors();
 
             let isValid = true;
 
-            // Validate name
             if (name === '') {
                 showError('prdOfferName-error', 'Name is required');
                 isValid = false;
@@ -264,31 +261,27 @@
                 isValid = false;
             }
 
-            // Validate starting date
             if (startingDate === '') {
                 showError('prdStartingDate-error', 'Starting Date is required');
                 isValid = false;
             }
 
-            // Validate ending date
             if (endingDate === '') {
                 showError('prdEndingDate-error', 'Ending Date is required');
                 isValid = false;
             }
 
-            // Validate product discount
             if (productDiscount === '') {
                 showError('prdDiscount-error', 'Product Discount is required');
                 isValid = false;
             } else if (isNaN(productDiscount)) {
                 showError('prdDiscount-error', 'Product Discount must be a number');
                 isValid = false;
-            } else if (productDiscount < 0 || productDiscount > 100) {
-                showError('prdDiscount-error', 'Product Discount must be between 0 and 100');
+            } else if (productDiscount < 0 || productDiscount > 40) {
+                showError('prdDiscount-error', 'Product Discount must be between 0 and 40');
                 isValid = false;
             }
 
-            // If form is valid, submit it
             if (isValid) {
                 form.submit();
             }
