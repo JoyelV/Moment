@@ -26,15 +26,19 @@ const addToWishlist = async (req, res) => {
                 user: user,
                 product: [id]
             });
-            
+            await wishlist.save();
+            res.status(200).json({ message: 'Product added to wishlist successfully.' });
         } else {
-
-            wishlist.product.push(id);
+            const productIndex = wishlist.product.indexOf(id);
+            if (productIndex === -1) {
+                wishlist.product.push(id);
+                await wishlist.save();
+                res.status(200).json({ message: 'Product added to wishlist successfully.' });
+            } else {
+                res.status(200).json({ message: 'Product already in wishlist.' });
+            }
         }
 
-        await wishlist.save();
-        res.status(200).send('Product added to wishlist successfully.');
-        console.log("product added successfully");
     } catch (err) {
         console.error('addToWishlist:', err.message);
         res.status(500).send('Internal Server Error');

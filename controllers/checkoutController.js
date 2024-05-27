@@ -237,73 +237,67 @@ const repayAmountNow = async(req,res)=>{
     }
 };
 
-const loadcheckout=async(req,res)=>{
-    try{
-        let address = await addressModel.findOne({
-          user: req.session.user_id
-        }) || null;
-
-        const cart=await cartModel.findOne({
-          owner: req.session.user_id
-        }).populate({path:'items.productId', model:'Products'}) || null;
-
-        var sum = 0;
-        for (const item of cart.items) {
-            const productId = item.productId;
-
-            const proOffer = await ProductOfferModel.findOne({ 'productOffer.product': productId, 'productOffer.offerStatus': true });
-
-            let specialDiscount = 0;
-            if (proOffer) {
-                specialDiscount += proOffer.productOffer.discount;
-            }
-            console.log("productOffer:",proOffer);
-
-            const proData = await productModel.findOne({_id:productId});
- 
-            const cateOffer = await CategoryOfferModel.findOne({
-                'categoryOffer.category': proData.category,
-                "is_active": true
-              });
-
-            if(cateOffer){
-                specialDiscount += cateOffer.categoryOffer.discount;
-            }
-
-            console.log("cateOffer:",cateOffer);
-            console.log("diascount:",specialDiscount);
-
-            let couponApplied = await couponModel.find({code:cart.coupon});
-            console.log("couponapplied",couponApplied)
-            let couponDiscount = couponApplied.discountPercentage;
-        
-            if(couponApplied.length === 0){
-                couponDiscount = 0;
-            }
-            console.log("couponDiscount",couponDiscount);
-
-            const products = await productModel.findOne({_id:productId});
-            var itemPrice = products.discountPrice - (products.discountPrice*specialDiscount)/100 - (products.discountPrice*couponDiscount)/100;
-            console.log("itemPrice",itemPrice);
-
-            item.price = itemPrice;
-            sum += itemPrice * item.quantity;
-            console.log("sum",sum);
-
-        }
-
-        cart.billTotal = sum;
-        console.log("billTotal price",cart.billTotal);
-        console.log("Delivery charges",cart.deliveryCharges);
-
-        const user=await User.findById(req.session.user_id);
-        res.render('checkout',{user,address,cart});
-    }
-    catch(error){
-      console.log('loadcheckout',error.message);
+const loadcheckout = async (req, res) => {
+    try {
+      let address = await addressModel.findOne({
+        user: req.session.user_id
+      }) || null;
+  
+      const cart = await cartModel.findOne({
+        owner: req.session.user_id
+      }).populate({ path: 'items.productId', model: 'Products' }) || null;
+  
+      if (!cart) {
+        userCart = { items: [], billTotal: 0 }; 
     }
   
-};
+      var sum = 0;
+      for (const item of cart.items) {
+        const productId = item.productId;
+  
+        const product = await productModel.findOne({ _id: productId, is_deleted: false });
+        if (!product) {
+            await cartModel.updateOne(
+                { owner: req.session.user_id },
+                { $pull: { items: { productId: productId } } }
+            );
+            continue;
+        }
+  
+        const proOffer = await ProductOfferModel.findOne({ 'productOffer.product': productId, 'productOffer.offerStatus': true });
+  
+        let specialDiscount = 0;
+        if (proOffer) {
+          specialDiscount += proOffer.productOffer.discount;
+        }
+  
+        const cateOffer = await CategoryOfferModel.findOne({
+          'categoryOffer.category': product.category,
+          "is_active": true
+        });
+  
+        if (cateOffer) {
+          specialDiscount += cateOffer.categoryOffer.discount;
+        }
+  
+        let couponApplied = await couponModel.findOne({ code: cart.coupon });
+        let couponDiscount = couponApplied ? couponApplied.discountPercentage : 0;
+  
+        var itemPrice = product.discountPrice - (product.discountPrice * specialDiscount) / 100 - (product.discountPrice * couponDiscount) / 100;
+  
+        item.price = itemPrice;
+        sum += itemPrice * item.quantity;
+      }
+  
+      cart.billTotal = sum;
+  
+      const user = await User.findById(req.session.user_id);
+      res.render('checkout', { user, address, cart });
+    } catch (error) {
+      console.log('loadcheckout', error.message);
+    }
+  };
+  
 
 async function generateUniqueOrderID() {
 

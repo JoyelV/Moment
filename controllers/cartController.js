@@ -14,7 +14,8 @@ const loadAndShowCart = async (req, res) => {
         let userCart = await cartModel.findOne({ owner: userId }).populate({ path: 'items.productId', model: 'Products' });
         const coupon = await couponModel.find();
         const eligibleCoupons = coupon.filter(coupon => {
-            return userCart.billTotal >= coupon.minimumAmount && userCart.billTotal <= coupon.maximumAmount && coupon.usersUsed.length<coupon.maxUsers && coupon.isActive;
+            return userCart.billTotal >= coupon.minimumAmount && userCart.billTotal <= coupon.maximumAmount && coupon.usersUsed.length<coupon.maxUsers && coupon.isActive &&
+            !coupon.usersUsed.includes(req.session.user_id);
         });
 
         let wish = await wishlistModel.findOne({ user: userId });
@@ -33,7 +34,14 @@ const loadAndShowCart = async (req, res) => {
 
             const proOffer = await ProductOfferModel.findOne({ 'productOffer.product': productId, 'productOffer.offerStatus': true });
 
-            const proData = await productModel.findOne({_id:productId});
+            const proData = await productModel.findOne({ _id: productId, is_deleted: false });
+            if(!proData){
+                await cartModel.updateOne(
+                    { owner: userId },
+                    { $pull: { items: { productId: productId } } }
+                );
+                continue;
+            }
 
             let specialDiscount = 0;
             if (proOffer) {
@@ -77,6 +85,20 @@ const addCouponToCart = async (req, res) => {
             return res.status(400).json({ error: 'Invalid coupon code' });
         }
         const userId = req.session.user_id;
+        let userCarts = await cartModel.findOne({ owner: userId }).populate('items');
+
+        for (const item of userCarts.items) {
+            const productId = item.productId;
+
+            const proData = await productModel.findOne({ _id: productId, is_deleted: false });
+            if(!proData){
+                await cartModel.updateOne(
+                    { owner: userId },
+                    { $pull: { items: { productId: productId } } }
+                );
+                continue; 
+            }
+        }
         let userCart = await cartModel.findOne({ owner: userId }).populate('items');
 
         if (!userCart) {
@@ -89,25 +111,24 @@ const addCouponToCart = async (req, res) => {
             userCart.discountPrice = (userCart.billTotal * discountPercentage) / 100;
             userCart.billTotal -= userCart.discountPrice;
             await userCart.save();
+            await coupon.save();
 
-        coupon.usersUsed = userId;
-        console.log("userId coupon",userId);
-        await coupon.save();
+            const couponAdd = await couponModel.findOneAndUpdate(
+                { code: code, isActive: true },
+                { $addToSet: { usersUsed: userId } }
+              );
+            await couponAdd.save();
         }
 
         var couponApplied = await couponModel.findOne({code:userCart.coupon});
         console.log("null",couponApplied)
         if (userCart.coupon === 'nil'){
-            console.log("cart.coupon",cart.coupon)
         }else{
             if(coupon.maximumAmount<userCart.billTotal){
                 userCart.coupon = 'nil';
-                console.log("cart.coupon",userCart.coupon)
                 await userCart.save();
              }
         }
-        
-        console.log("cart coupn",userCart.coupon)
 
         const updatedUserCart = await cartModel.findOne({ owner: userId }).populate({ path: 'items.productId', model: 'Products' });
 
@@ -132,6 +153,21 @@ const removeCouponFromCart = async (req, res) => {
     try {
         const { code } = req.query; 
         const userId = req.session.user_id;
+
+        let userCarts = await cartModel.findOne({ owner: userId }).populate('items');
+
+        for (const item of userCarts.items) {
+            const productId = item.productId;
+
+            const proData = await productModel.findOne({ _id: productId, is_deleted: false });
+            if(!proData){
+                await cartModel.updateOne(
+                    { owner: userId },
+                    { $pull: { items: { productId: productId } } }
+                );
+                continue; 
+            }
+        }
         
         let userCart = await cartModel.findOne({ owner: userId }).populate('items');
 
@@ -144,6 +180,8 @@ const removeCouponFromCart = async (req, res) => {
         }
 
         const coupon = await couponModel.findOne({ code: userCart.coupon});
+        coupon.usersUsed = coupon.usersUsed.filter(id => id.toString() !== userId.toString());
+        await coupon.save();
 
         console.log("userId coupon", userId);
         userCart.coupon = undefined;
@@ -298,8 +336,6 @@ const increaseQuantity = async (req, res) => {
         console.log("cart coupn",cart.coupon)
 
         await cart.save();
-
-        await console.log(cart);
         return res.status(200).json({ message: 'Quantity increased', cart });
     } catch (err) {
         console.error(err.message);

@@ -416,7 +416,7 @@ const loaduserprofile = async (req, res) => {
         const wallet = await Wallet.findOne({ user: userId }).populate('user');
 
         if (req.query.ajax) {
-            res.json({ orders, totalPages, currentPage: page });
+            res.json({ orders, totalPages, currentPage: page,wallet });
         } else {
             res.render('userProfile', { user, address, orders, totalPages, currentPage: page, wallet, message: "User registered successfully" });
         }

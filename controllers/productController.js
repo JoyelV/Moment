@@ -267,7 +267,7 @@ const loadShop = async (req, res) => {
         let search = req.query.q;
         let cate = req.query.category;
         let sorted = req.query.sort;
-        let query = {};
+        let query = { is_deleted: false };
 
         console.log(search,"Hii result")
 
@@ -283,7 +283,7 @@ const loadShop = async (req, res) => {
             query = { ...query, ...searchCondition };
         }
         if(search ==='all'||search==='All'){
-            query = {};
+            query = { is_deleted: false };
         }
 
         if (req.query.category) {
@@ -463,7 +463,7 @@ const loadWomenShop = async (req, res) => {
             case 'priceAsc':
                 sortOption = { discountPrice: 1 };
                 break;
-            case 'priceDsc': // Changed to match the HTML option value
+            case 'priceDsc': 
                 sortOption = { discountPrice: -1 };
                 break;
             case 'newness':
@@ -472,7 +472,7 @@ const loadWomenShop = async (req, res) => {
             case 'nameAsc':
                 sortOption = { name: 1 };
                 break;
-            case 'nameDsc': // Changed to match the HTML option value
+            case 'nameDsc': 
                 sortOption = { name: -1 };
                 break;
             case 'outOfStock':

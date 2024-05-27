@@ -468,11 +468,11 @@
                     <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
                 </ul>
 
-                <ul class="user-link">
+                <!-- <ul class="user-link">
                     <li><a href="wishlist.html">Wishlist</a></li>
                     <li><a href="cart.html">Cart</a></li>
                     <li><a href="checkout.html">Checkout</a></li>
-                </ul>
+                </ul> -->
             </div>
             <!-- End Mobile contact Info -->
 
@@ -505,11 +505,11 @@
                 <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
             </ul>
 
-            <ul class="user-link">
+            <!-- <ul class="user-link">
                 <li><a href="wishlist.html">Wishlist</a></li>
                 <li><a href="cart.html">Cart</a></li>
                 <li><a href="checkout.html">Checkout</a></li>
-            </ul>
+            </ul> -->
         </div>
         <!-- End Mobile contact Info -->
     </div> <!-- ...:::: End Offcanvas Mobile Menu Section:::... -->
@@ -703,82 +703,92 @@
     <!-- ...:::: Start Checkout Section:::... -->
     <div class="checkout-section">
         <form action="" method="post">
-        <div class="container">
-            <!-- Start User Details Checkout Form -->
-            <div class="checkout_form" data-aos="fade-up" data-aos-delay="400">
-                <div class="row">
-                    <div class="col-lg-6 col-md-6">
-                        <!-- <h5 class="billing-address">Address</h5> -->
-                            <h3 class="card-title"><%=user.name%></h3>
-                            <%if(address!== null){
-                                for (let i = 0; i < address.addresses.length; i++) {
-                                    
-                                    
-                                %>
-                               
-                                <div class="card mb-2">
-                                    <div class="card-body" style="display: flex; align-items: center;">
-                                        <div class="address-radio" style="margin-right: 10px;">
-                                            <input type="radio" name="address" value="<%=address.addresses[i].addressType %>" id="address<%= i %>" style="margin-top: 6px;" />
-                                            <label for="address<%= i %>"></label>
-                                        </div>
-                                        <div class="address-details">
-                                            <p class="card-text">
-                                                <%= address.addresses[i].HouseNo %> ,
-                                                <%= address.addresses[i].Landmark %> ,
-                                                <%= address.addresses[i].Street %> ,
-                                                <%= address.addresses[i].city %> ,
-                                                <%= address.addresses[i].district %> ,
-                                                <%= address.addresses[i].Country %>,
-                                                Pincode-<%= address.addresses[i].pincode %>
-                                            </p>
-                                            <a href="/editaddress?addressType=<%= address.addresses[i].addressType %>" class="btn btn-md btn-black-default-hover">Edit</a>
-                                            <a href="/deleteaddress?addressType=<%= address.addresses[i].addressType %>" class="btn btn-md btn-black-default-hover">Remove</a>
+            <div class="container">
+                <!-- Start User Details Checkout Form -->
+                <div class="checkout_form" data-aos="fade-up" data-aos-delay="400">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <!-- <h5 class="billing-address">Address</h5> -->
+                            <h3 class="card-title"><%= user.name %></h3>
+                            <% if (address && address.addresses && address.addresses.length > 0) { %>
+                                <% for (let i = 0; i < address.addresses.length; i++) { %>
+                                    <div class="card mb-2">
+                                        <div class="card-body" style="display: flex; align-items: center;">
+                                            <div class="address-radio" style="margin-right: 10px;">
+                                                <input type="radio" name="address" value="<%= address.addresses[i].addressType %>" id="address<%= i %>" style="margin-top: 6px;" />
+                                                <label for="address<%= i %>"></label>
+                                            </div>
+                                            <div class="address-details">
+                                                <p class="card-text">
+                                                    <%= address.addresses[i].HouseNo %>,
+                                                    <%= address.addresses[i].Landmark %>,
+                                                    <%= address.addresses[i].Street %>,
+                                                    <%= address.addresses[i].city %>,
+                                                    <%= address.addresses[i].district %>,
+                                                    <%= address.addresses[i].Country %>,
+                                                    Pincode-<%= address.addresses[i].pincode %>
+                                                </p>
+                                                <a href="/editaddress?addressType=<%= address.addresses[i].addressType %>" class="btn btn-md btn-black-default-hover">Edit</a>
+                                                <a href="/deleteaddress?addressType=<%= address.addresses[i].addressType %>" class="btn btn-md btn-black-default-hover">Remove</a>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                              <%}}else{%>
+                                <% } %>
+                            <% } else { %>
                                 <p>Please Add address</p>
-                                <%}%><br>
-                                <a href="/addaddress" class="btn btn-md btn-black-default-hover">Add Address</a>
-                    </div>
-                    <div class="col-lg-6 col-md-6">
-                        
+                            <% } %>
+                            <br>
+                            <a href="/addaddress" class="btn btn-md btn-black-default-hover">Add Address</a>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
                             <h3>Your order</h3>
                             <div class="order_table table-responsive">
                                 <table>
                                     <thead>
                                         <tr>
                                             <th>Product</th>
-                                            <th>Total</th>
+                                            <th>Qty(Unit)</th>
+                                            <th>Total(Unit)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                           <% for(let i=0;i<cart.items.length;i++){ %>
-                                        <tr>
-                                            <td class="product_name"><a href="/productdetails?id=<%=cart.items[i].productId._id %>"><%=cart.items[i].productId.name%> </a></td>
-                                            <td class="product_total" id="carttotal">Rs.<%=cart.items[i].price%>.00</td>
-                                        </tr>
-                                            <%}%>
+                                        <% if (cart && cart.items && cart.items.length > 0) { %>
+                                            <% for (let i = 0; i < cart.items.length; i++) { %>
+                                                <tr>
+                                                    <td class="product_name"><a href="/productdetails?id=<%= cart.items[i].productId._id %>"><%= cart.items[i].productId.name %></a></td>
+                                                    <td class="product_total" id="carttotal">0<%= cart.items[i].quantity %>Nos</td>
+                                                    <td class="product_total" id="carttotal">Rs.<%= cart.items[i].price %>.00</td>
+                                                </tr>
+                                            <% } %>
                                             <tr>
                                                 <td class="delivery">Delivery charges</td>
-                                                <td class="delivery" id="deliverytotal">Rs<%=cart.deliveryCharges %>.00</td>
+                                                <td class="delivery" id="deliveryqty">1 Ls</td>
+                                                <td class="delivery" id="deliverytotal">Rs.<%= cart.deliveryCharges %>.00</td>
                                             </tr>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="2">No products available</td>
+                                            </tr>
+                                        <% } %>
                                     </tbody>
+                                    <tfoot>
+                                        <% if (cart && cart.items && cart.items.length > 0) { %>
                                         <tr class="order_total">
                                             <th>Order Total</th>
-                                                <td><strong>Rs.<%=cart.billTotal + cart.deliveryCharges %>.00</strong></td>
+                                            <td>1 Ls</td>
+                                            <td><strong>Rs.<%= (cart ? (cart.billTotal + cart.deliveryCharges) : 0) %>.00</strong></td>
                                         </tr>
+                                        <% } %>
                                     </tfoot>
                                 </table>
-                                <% if (cart.coupon !== "nil") { %>
-                                    <a href="/removeCouponFromCart?code=<%= cart.coupon %>" class="btn btn-md btn-golden">Remove Coupon - CODE: <%= cart.coupon %> </a>
-                            <% } %>  
-                            <% if (cart.coupon === "nil") { %>
-                                <p>No coupon selected</p>
-                                <% } %>  
+                                <% if (cart && cart.coupon !== "nil") { %>
+                                    <a href="/removeCouponFromCart?code=<%= cart.coupon %>" class="btn btn-md btn-golden">Remove Coupon - CODE: <%= cart.coupon %></a>
+                                <% } else { %>
+                                    <p>No coupon selected</p>
+                                <% } %>
                             </div>
-                            <% if (cart.billTotal < 1000) { %>
+                            <% if (cart && cart.items && cart.items.length > 0) { %>
+                            <% if (cart && cart.billTotal < 1000) { %>
                                 <div class="payment_method">
                                     <div class="panel-default">
                                         <label class="checkbox-default" for="currencyCod" data-bs-toggle="collapse" data-bs-target="#methodCod">
@@ -788,33 +798,41 @@
                                         <div id="methodCod" class="collapse" data-parent="#methodCod">
                                             <div class="card-body1">
                                                 <p>Please use COD for orders below 1000 rupees total and pay the cash at the time of delivery of the product.</p>
-                                            </div> 
-                                        </div>
-                                    </div>
-                                    <%} else { %>
-                                    <div class="payment_method">
-                                        <div class="panel-default">
-                                            <label class="checkbox-default" for="currencyCod" data-bs-toggle="collapse" data-bs-target="#methodCod">
-                                                <input type="radio" id="razorpay" value="razorpay" name="paymentOption">
-                                                <span>Pay with Razorpay</span>
-                                            </label>
-                                            <div id="methodCod" class="collapse" data-parent="#methodCod">
-                                                <div class="card-body1">
-                                                    <p>Please use Razorpay for orders above 1000 rupees total and pay the cash at the time of delivery of the product.</p>
-                                                </div> 
                                             </div>
                                         </div>
-                                    <%}%>
+                                    </div>
                                 </div>
                                 <div class="order_button pt-3">
-                                    <button class="btn btn-md btn-black-default-hover" id="proceedButton" type="submit" >Place Order</button>
+                                    <button class="btn btn-md btn-black-default-hover" id="proceedButton" type="submit">Place Order</button>
                                 </div>
-                            </form>
-                        </div>
+                            <% } else { %>
+                                <div class="payment_method">
+                                    <div class="panel-default">
+                                        <label class="checkbox-default" for="razorpay" data-bs-toggle="collapse" data-bs-target="#methodCod">
+                                            <input type="radio" id="razorpay" value="razorpay" name="paymentOption">
+                                            <span>Pay with Razorpay</span>
+                                        </label>
+                                        <div id="methodCod" class="collapse" data-parent="#methodCod">
+                                            <div class="card-body1">
+                                                <p>Please use Razorpay for orders above 1000 rupees total and pay the cash at the time of delivery of the product.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="order_button pt-3">
+                                    <button class="btn btn-md btn-black-default-hover" id="proceedButton" type="submit">Place Order</button>
+                                </div>
+                            <% } %>
+                            <% } else { %>
+                                <p>No product in the cart</p>
+                                <% } %>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    
 
     <!-- Start Footer Section -->
     <footer class="footer-section footer-bg section-top-gap-100">
@@ -1199,6 +1217,22 @@
 <script src="assets/js/main.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
+<% if (!cart || cart.items.length === 0) { %>
+    <script>
+        Swal.fire({
+            title: 'Cart Empty!',
+            text: 'Your cart is currently empty.',
+            icon: 'info',
+            confirmButtonText: 'Go Shopping'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/shop';
+            }
+        });
+    </script>
+<% } %>
+
+<% if (cart && cart.items && cart.items.length > 0) { %>
 <script>
     document.getElementById('proceedButton').addEventListener("click", async (e) => {
         e.preventDefault();
@@ -1366,8 +1400,9 @@
             });
         }
     });
-    </script>
     
+    </script>
+  <% } %>
 
 </body>
 </html>

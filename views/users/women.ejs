@@ -503,11 +503,11 @@
                     <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
                 </ul>
 
-                <ul class="user-link">
+                <!-- <ul class="user-link">
                     <li><a href="wishlist.html">Wishlist</a></li>
                     <li><a href="/cart">Cart</a></li>
                     <li><a href="checkout.html">Checkout</a></li>
-                </ul>
+                </ul> -->
             </div>
             <!-- End Mobile contact Info -->
 
@@ -540,11 +540,11 @@
                 <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
             </ul>
 
-            <ul class="user-link">
+            <!-- <ul class="user-link">
                 <li><a href="wishlist.html">Wishlist</a></li>
                 <li><a href="/cart">Cart</a></li>
                 <li><a href="checkout.html">Checkout</a></li>
-            </ul>
+            </ul> -->
         </div>
         <!-- End Mobile contact Info -->
     </div> <!-- ...:::: End Offcanvas Mobile Menu Section:::... -->
@@ -877,17 +877,10 @@
                                                             </a>
                                                             <div class="action-link">
                                                                 <div class="action-link-left">
-                                                                    <a href="#"  data-bs-toggle="modal"
-                                                                        data-bs-target="#modalAddcart">Add to Cart</a>
+                                                                    <a href="/productDetails?id=<%= product[i]._id %>" >View Product</a>
                                                                 </div>
                                                                 <div class="action-link-right">
-                                                                    <a href="#" data-bs-toggle="modal"
-                                                                        data-bs-target="#modalQuickview"><i
-                                                                            class="icon-magnifier"></i></a>
-                                                                    <a href="#"><i
-                                                                            class="icon-heart"></i></a>
-                                                                    <a href="#"><i
-                                                                            class="icon-shuffle"></i></a>
+                                                                    <a href="#" onclick="addToWishlist('<%= product[i]._id %>')"><i class="icon-heart"></i></a>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1407,7 +1400,57 @@
 
     <!-- Main JS -->
     <script src="assets/js/main.js"></script>
-    
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
+    <script>
+        function addToWishlist(productId) {
+            fetch(`/addtowishlist?id=${productId}`, {
+                method: 'GET',
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                return response.json().then(data => {
+                    if (response.ok) {
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        });
+    
+                        Toast.fire({
+                            icon: 'success',
+                            title: data.message
+                        });
+    
+                        setTimeout(() => {
+                            window.location.href = '/women';
+                        }, 2000);
+    
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Alert',
+                            text: data.message,
+                            showConfirmButton: true
+                        });
+                    }
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong! Could not add to wishlist.',
+                    showConfirmButton: true
+                });
+            });
+        }
+</script>
+</body>
 </html>

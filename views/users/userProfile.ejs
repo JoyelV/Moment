@@ -106,11 +106,7 @@
                                             <!-- <span class="item-count">3</span> -->
                                         </a>
                                     </li>
-                                    <li>
-                                        <a href="/search">
-                                            <i class="icon-magnifier"></i>
-                                        </a>
-                                    </li>
+                                   
                                     <li>
                                         <a href="/userprofile">
                                             <i class="icon-user"></i>
@@ -300,11 +296,7 @@
                                             <!-- <span class="item-count">3</span> -->
                                         </a>
                                     </li>
-                                    <li>
-                                        <a href="/search">
-                                            <i class="icon-magnifier"></i>
-                                        </a>
-                                    </li>
+                                    
                                     <li>
                                         <a href="/userprofile">
                                             <i class="icon-user"></i>
@@ -360,11 +352,7 @@
                                         <!-- <span class="item-count">3</span> -->
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="/search">
-                                        <i class="icon-magnifier"></i>
-                                    </a>
-                                </li>
+                               
                                 <li>
                                     <a href="/userprofile">
                                         <i class="icon-user"></i>
@@ -552,11 +540,11 @@
                     <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
                 </ul>
     
-                <ul class="user-link">
+                <!-- <ul class="user-link">
                     <li><a href="wishlist.html">Wishlist</a></li>
                     <li><a href="/cart">Cart</a></li>
                     <li><a href="checkout.html">Checkout</a></li>
-                </ul>
+                </ul> -->
             </div>
             <!-- End Mobile contact Info -->
         </div> <!-- ...:::: End Offcanvas Mobile Menu Section:::... -->
@@ -854,7 +842,7 @@
                                     <ul class="pagination">
                                         <% for (let i = 1; i <= totalPages; i++) { %>
                                             <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                                <a class="page-link" href="#" onclick="loadOrders(<%= i %>)"><%= i %></a>
+                                                <a class="page-link" href="#"><%= i %></a>
                                             </li>
                                         <% } %>
                                     </ul>
@@ -1310,99 +1298,146 @@
 <script src="assets/js/main.js"></script>
 
 <script>
-    function removeMessages() {
-        const errorMessages = document.querySelectorAll('.text-danger');
-        const successMessages = document.querySelectorAll('.text-success');
-
-        errorMessages.forEach(messageElement => {
-            setTimeout(() => {
-                messageElement.style.display = 'none';
-            }, 5000);
-        });
-
-        successMessages.forEach(messageElement => {
-            setTimeout(() => {
-                messageElement.style.display = 'none';
-            }, 5000);
-        });
-    }
-
-    window.onload = function() {
-        removeMessages();
-    };
-
-    function validateForm() {
-        const nameInput = document.querySelector('input[name="name"]');
-        const mobileInput = document.querySelector('input[name="mobile"]');
-
-        const nameError = document.getElementById('nameError');
-        const mobileError = document.getElementById('mobileError');
-
-        const nameRegex = /^[A-Z][a-z]+(?: [A-Z][a-z]+)*$/;
-        const mobileRegex = /^[6-9]\d{9}$/;
-
-        if (!nameRegex.test(nameInput.value)) {
-            nameError.textContent = 'Invalid name format!';
-            nameError.style.color = 'red';
-            return false;
-        } else {
-            nameError.textContent = '';
-        }
-
-        if (!mobileRegex.test(mobileInput.value)) {
-            mobileError.textContent = 'Invalid mobile number format!';
-            mobileError.style.color = 'red';
-            return false;
-        } else {
-            mobileError.textContent = '';
-        }
-        return true;
-    }
-
-    function loadOrders(page) {
-        $.ajax({
-            url: '/userprofile',
-            method: 'GET',
-            data: { page: page, ajax: true },
-            success: function(response) {
+function loadUserProfileData(page = 1) {
+    $.ajax({
+        url: '/userprofile',
+        method: 'GET',
+        data: { page: page, ajax: true },
+        success: function(response) {
+            if ($('#orders').hasClass('active')) {
                 updateOrdersTable(response.orders);
                 updatePagination(response.currentPage, response.totalPages);
-            },
-            error: function(error) {
-                console.error('Error fetching orders:', error);
+            } else if ($('#wallet').hasClass('active')) {
+                updateWalletTable(response.wallet);
             }
+        },
+        error: function(error) {
+            console.error('Error fetching user profile data:', error);
+        }
+    });
+}
+
+function updateOrdersTable(orders) {
+    let ordersTableBody = '';
+    if (orders.length > 0) {
+        orders.forEach(order => {
+            ordersTableBody += `
+                <tr>
+                    <td>${new Date(order.orderDate).toString().split(' ').slice(0, 5).join(' ')}</td>
+                    <td>${order.oId}</td>
+                    <td><span class="success">${order.status}</span></td>
+                    <td>${order.billTotal}</td>
+                    <td><a href="/orderdetails?id=${order._id}" class="view">view</a></td>
+                </tr>`;
         });
+    } else {
+        ordersTableBody = '<tr><td colspan="5">No orders found</td></tr>';
+    }
+    $('#orders table tbody').html(ordersTableBody);
+}
+
+function updateWalletTable(wallet) {
+    let walletTableBody = '';
+    if (wallet && wallet.transaction.length > 0) {
+        wallet.transaction.forEach(transaction => {
+            walletTableBody += `
+                <tr>
+                    <td>${new Date(transaction.date).toString().split(' ').slice(0, 4).join(' ')}</td>
+                    <td>${transaction.paymentMethod}</td>
+                    <td>${transaction.paymentStatus}</td>
+                    <td>${transaction.amount}</td>
+                </tr>`;
+        });
+        walletTableBody += `
+            <tr class="balance-row">
+                <td colspan="3"><strong>Balance Amount In Wallet:</strong></td>
+                <td class="balance-amount">${wallet.amount}</td>
+            </tr>`;
+    } else {
+        walletTableBody = '<tr><td colspan="4">No wallet data found</td></tr>';
+    }
+    $('#wallet table tbody').html(walletTableBody);
+}
+
+function updatePagination(currentPage, totalPages) {
+    let paginationHtml = '';
+    for (let i = 1; i <= totalPages; i++) {
+        paginationHtml += `
+            <li class="page-item ${currentPage === i ? 'active' : ''}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+            </li>`;
+    }
+    $('.pagination').html(paginationHtml);
+}
+
+$(document).ready(function() {
+    // Event delegation for pagination links
+    $(document).on('click', '.pagination a', function(event) {
+        event.preventDefault();
+        const page = $(this).data('page');
+        loadUserProfileData(page);
+    });
+
+    // Load content when a tab is shown
+    $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function(event) {
+        const target = $(event.target).attr('href'); // Get the target tab pane
+        loadUserProfileData(1); // Always load the first page when switching tabs
+    });
+
+    // Initial load
+    const activeTab = $('.nav-link.active').attr('href');
+    loadUserProfileData(1);
+});
+
+function removeMessages() {
+    const errorMessages = document.querySelectorAll('.text-danger');
+    const successMessages = document.querySelectorAll('.text-success');
+
+    errorMessages.forEach(messageElement => {
+        setTimeout(() => {
+            messageElement.style.display = 'none';
+        }, 5000);
+    });
+
+    successMessages.forEach(messageElement => {
+        setTimeout(() => {
+            messageElement.style.display = 'none';
+        }, 5000);
+    });
+}
+
+window.onload = function() {
+    removeMessages();
+};
+
+function validateForm() {
+    const nameInput = document.querySelector('input[name="name"]');
+    const mobileInput = document.querySelector('input[name="mobile"]');
+
+    const nameError = document.getElementById('nameError');
+    const mobileError = document.getElementById('mobileError');
+
+    const nameRegex = /^[A-Z][a-z]+(?: [A-Z][a-z]+)*$/;
+    const mobileRegex = /^[6-9]\d{9}$/;
+
+    if (!nameRegex.test(nameInput.value)) {
+        nameError.textContent = 'Invalid name format!';
+        nameError.style.color = 'red';
+        return false;
+    } else {
+        nameError.textContent = '';
     }
 
-    function updateOrdersTable(orders) {
-        let ordersTableBody = '';
-        if (orders.length > 0) {
-            orders.forEach(order => {
-                ordersTableBody += `
-                    <tr>
-                        <td>${new Date(order.orderDate).toString().split(' ').slice(0, 5).join(' ')}</td>
-                        <td>${order.oId}</td>
-                        <td><span class="success">${order.status}</span></td>
-                        <td>${order.billTotal}</td>
-                        <td><a href="/orderdetails?id=${order._id}" class="view">view</a></td>
-                    </tr>`;
-            });
-        } else {
-            ordersTableBody = '<tr><td colspan="5">No orders found</td></tr>';
-        }
-        $('table tbody').html(ordersTableBody);
+    if (!mobileRegex.test(mobileInput.value)) {
+        mobileError.textContent = 'Invalid mobile number format!';
+        mobileError.style.color = 'red';
+        return false;
+    } else {
+        mobileError.textContent = '';
     }
+    return true;
+}
 
-    function updatePagination(currentPage, totalPages) {
-        let paginationHtml = '';
-        for (let i = 1; i <= totalPages; i++) {
-            paginationHtml += `
-                <li class="page-item ${currentPage === i ? 'active' : ''}">
-                    <a class="page-link" href="#" onclick="loadOrders(${i})">${i}</a>
-                </li>`;
-        }
-        $('.pagination').html(paginationHtml);
-    }
 </script>
 
 </body>
