@@ -805,7 +805,7 @@
             Categories
         </button>
         <div class="dropdown-menu" aria-labelledby="categoriesDropdown">
-            <a href="/shop?q=<%= query %>&sort=<%= sort %>&category=&page=<%=currentPage %>"" class="dropdown-item">All</a>
+            <a href="/shop?q=<%= query %>&sort=<%= sort %>&category=&page=<%=currentPage %>"class="dropdown-item">All</a>
             <% if (category.length > 0) { %>
                 <!-- Dynamic Categories -->
                 <% category.forEach(categoryItem => { %>
@@ -867,7 +867,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div></br>
                     <!-- Start Tab Wrapper -->
                     <div class="sort-product-tab-wrapper">
                         <div class="container">

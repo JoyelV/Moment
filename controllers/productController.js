@@ -271,7 +271,7 @@ const loadShop = async (req, res) => {
 
         console.log(search,"Hii result")
 
-        if (search!=='all'||search!=='All') {
+        if (req.query.q) {
             const searchQuery = req.query.q;
 
             const searchCondition = {
@@ -351,6 +351,10 @@ const loadMenShop = async (req, res) => {
     try {
         const category = await categoryModel.find({});
 
+        let search = req.query.q;
+        let cate = req.query.category;
+        let sorted = req.query.sort;
+
         let query = { gender: 'Men', is_deleted: { $ne: 'true' } };
 
         if (req.query.category) {
@@ -368,6 +372,10 @@ const loadMenShop = async (req, res) => {
             query = { ...query, ...searchCondition };
         }
 
+        if (search === 'all' || search === 'All') {
+            query = { gender: 'Men', is_deleted: { $ne: 'true' } };
+        }
+
         let sortOption = {};
 
         switch (req.query.sort) {
@@ -377,7 +385,7 @@ const loadMenShop = async (req, res) => {
             case 'priceAsc':
                 sortOption = { discountPrice: 1 };
                 break;
-            case 'priceDesc':
+            case 'priceDsc': // Changed to match the HTML option value
                 sortOption = { discountPrice: -1 };
                 break;
             case 'newness':
@@ -386,7 +394,7 @@ const loadMenShop = async (req, res) => {
             case 'nameAsc':
                 sortOption = { name: 1 };
                 break;
-            case 'nameDesc':
+            case 'nameDsc': // Changed to match the HTML option value
                 sortOption = { name: -1 };
                 break;
             case 'outOfStock':
@@ -396,15 +404,20 @@ const loadMenShop = async (req, res) => {
                 query.countInStock = { $gt: 0 };
                 break;
             default:
-                sortOption = { createdAt: -1 };
+                sortOption = { name: 1 };
                 break;
         }
 
-        const page = parseInt(req.query.page) || 1;
+        let page = parseInt(req.query.page) || 1;
         const limit = 6;
 
         const totalProductsCount = await productModel.countDocuments(query);
         const totalPages = Math.ceil(totalProductsCount / limit);
+
+        if (totalPages < 2) {
+            page = 1;
+        }
+
         const skip = (page - 1) * limit;
 
         const product = await productModel
@@ -413,13 +426,12 @@ const loadMenShop = async (req, res) => {
             .skip(skip)
             .limit(limit);
 
-        res.render('mens', { product, category, totalPages, currentPage: page });
+        res.render('mens', { product, category, totalPages, currentPage: page, query: search, cate: cate, sort: sorted });
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
     }
 };
-
 
 const loadWomenShop = async (req, res) => {
     try {
@@ -451,7 +463,7 @@ const loadWomenShop = async (req, res) => {
             case 'priceAsc':
                 sortOption = { discountPrice: 1 };
                 break;
-            case 'priceDesc':
+            case 'priceDsc': // Changed to match the HTML option value
                 sortOption = { discountPrice: -1 };
                 break;
             case 'newness':
@@ -460,7 +472,7 @@ const loadWomenShop = async (req, res) => {
             case 'nameAsc':
                 sortOption = { name: 1 };
                 break;
-            case 'nameDesc':
+            case 'nameDsc': // Changed to match the HTML option value
                 sortOption = { name: -1 };
                 break;
             case 'outOfStock':
@@ -474,7 +486,7 @@ const loadWomenShop = async (req, res) => {
                 break;
         }
 
-        const page = parseInt(req.query.page) || 1;
+        let page = parseInt(req.query.page) || 1;
         const limit = 6;
 
         const totalProductsCount = await productModel.countDocuments(query);
@@ -487,12 +499,13 @@ const loadWomenShop = async (req, res) => {
             .skip(skip)
             .limit(limit);
 
-        res.render('Women', { product, category, totalPages, currentPage: page });
+        res.render('women', { product, category, totalPages, currentPage: page, query: req.query.q, cate: req.query.category, sort: req.query.sort });
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
     }
 };
+
 
 const reviewProduct = async (req, res) => {
     try {
