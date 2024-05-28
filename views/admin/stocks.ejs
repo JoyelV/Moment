@@ -181,7 +181,7 @@
                 </div>
             </div>
             <h1>STOCK LIST</h1>
-            <form action="/admin/searchStock" method="GET" class="mb-4">
+            <form action="/admin/searchStock?page=<%= currentPage %>&q=<%= query %>"" method="GET" class="mb-4">
                 <div class="input-group">
                     <input type="search" class="form-control" style="border: solid 1px;" placeholder="Enter product name or brand name " name="q">
                     <div class="input-group-append">

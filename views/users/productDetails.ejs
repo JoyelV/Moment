@@ -98,7 +98,7 @@
                             <!-- Start Header Logo -->
                             <div class="header-logo">
                                 <div class="logo">
-                                    <a href=""><img src="adminassets/imgs/brands/7d02989082b082e58141cce8a7536ee3.jpg" alt=""></a>
+                                    <a href="/home"><img src="adminassets/imgs/brands/7d02989082b082e58141cce8a7536ee3.jpg" alt=""></a>
                                 </div>
                             </div>
                             <!-- End Header Logo -->
@@ -220,7 +220,7 @@
                             <!-- Start Header Logo -->
                             <div class="header-logo">
                                 <div class="logo">
-                                    <a href="index.html"><img src="assets\images\carosal\logo.jpg" alt=""></a>
+                                    <a href="/home"><img src="adminassets/imgs/brands/7d02989082b082e58141cce8a7536ee3.jpg" alt=""></a>
                                 </div>
                             </div>
                             <!-- End Header Logo -->
@@ -821,11 +821,11 @@
                             // Calculate the discount percentage
                             const discountPercentage = ((product.price - product.discountPrice) / product.price) * 100;
                             %>
-                            <% if (specialDiscount == 0) { %>
+                            <% if (specialDiscount < discountPercentage) { %>
                             <span class="save-price font-md color3 ml-15" style="color: rgb(230, 15, 144);"><b>-<%= Math.round(discountPercentage) %>% Discount</b></span><br>
                             <% } %>
 
-                            <% if (specialDiscount > 0) { %>
+                            <% if (specialDiscount > discountPercentage) { %>
                             <span class="save-price font-md color3 ml-15" style="color: rgb(119, 230, 15);"><b>-<%= specialDiscount %>% Special Discount</b></span><br>
                             <% } %>
                             

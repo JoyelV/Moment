@@ -173,7 +173,7 @@
                 <div class="col-lg-9"> <!-- Adjusted to take up 9 columns -->
                     <div class="card mb-4">
                         <div class="card-header">
-                            <form action="/admin/search" method="GET">
+                            <form action="/admin/search?q=<%= query %>&page=<%= currentPage %>" method="GET">
                                 <div class="input-group">
                                     <input type="search" class="form-control" placeholder="Enter product name or brand name" name="q">
                                     <div class="input-group-append">
@@ -255,15 +255,15 @@
 <!-- pagination starts here // -->
         <div class="page-pagination">
                 <% if (currentPage > 1) { %>
-                        <a href="/admin/product?page=<%= currentPage - 1 %>"class="page-link">Previous</a>
+                        <a href="/admin/product?q=<%= query %>&page=<%= currentPage - 1 %>"class="page-link">Previous</a>
                 <% } %>
                 
                 <% for (let i = 1; i <= totalPages; i++) { %>
-                        <a class="page-link <% if (currentPage === i) { %> active <% } %>" href="/admin/product?page=<%= i %>"><%= i %></a>
+                        <a class="page-link <% if (currentPage === i) { %> active <% } %>" href="/admin/product?q=<%= query %>&page=<%= i %>"><%= i %></a>
                 <% } %>
                 
                 <% if (currentPage < totalPages) { %>
-                        <a href="/admin/product?page=<%= currentPage + 1 %>"class="page-link" >Next</a>
+                        <a href="/admin/product?q=<%= query %>&page=<%= currentPage + 1 %>"class="page-link" >Next</a>
                 <% } %>
         </div>
 <!-- pagination ends// -->

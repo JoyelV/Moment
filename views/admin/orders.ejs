@@ -167,7 +167,7 @@
                 <div class="col-lg-9"> <!-- Adjusted to take up 9 columns -->
                     <div class="card mb-4">
                         <div class="card-header">
-                            <form id="searchForm" action="/admin/order" method="GET">
+                            <form id="searchForm" action="/admin/order?q=<%= query %>&page=<%= currentPage %>" method="GET">
                                 <div class="input-group">
                                     <input type="search" class="form-control" placeholder="Search by username, OrderID or order status" name="q">
                                     <!-- Include hidden input field for current page -->
