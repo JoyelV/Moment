@@ -12,7 +12,8 @@ const config = require("./config/config")
 
 initializingPassport(passport);
 
-mongoose.connect("mongodb://localhost:27017/ums");
+// mongoose.connect("mongodb://localhost:27017/ums");
+mongoose.connect("mongodb+srv://varghesejoyel71:Rq0sGBzHOxRLvAUN@clusterproject.rue47cu.mongodb.net/?retryWrites=true&w=majority&appName=ClusterProject");
 const app = express();
 
 app.use(express.json());
