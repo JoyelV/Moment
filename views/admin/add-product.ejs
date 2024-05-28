@@ -165,28 +165,28 @@
                                     <p id="descriptionError" class="text-danger"></p> <!-- Placeholder for description error -->
                                 </div>
                                 <div class="mb-4">
-                                    <label for="brand_name" class="form-label">Brand</label>
+                                    <label for="product_name" class="form-label">Brand</label>
                                     <input type="text" placeholder="Type Brand name here" class="form-control" name="brand" id="brand_name">
-                                    <p id="nameError" class="text-danger"></p> <!-- Placeholder for name error -->
+                                    <p id="brandError" class="text-danger"></p> <!-- Placeholder for name error -->
                                 </div>
                                 <div class="mb-4">
-                                    <label for="gender_name" class="form-label">Gender</label>
+                                    <label for="product_name" class="form-label">Gender</label>
                                     <input type="text" placeholder="Type product name here" class="form-control" name="gender" id="gender_name">
-                                    <p id="nameError" class="text-danger"></p> <!-- Placeholder for name error -->
+                                    <p id="genderError" class="text-danger"></p> <!-- Placeholder for name error -->
                                 </div>                            
                                 <!-- Pricing Section -->
                                 <div class="row">
                                     <div class="col-lg-4">
                                         <div class="mb-4">
                                             <label for="regular_price" class="form-label">Price</label>
-                                            <input placeholder="₹" type="text" class="form-control" name="regular_price" id="regular_price">
+                                            <input placeholder="₹" type="text" class="form-control" name="price" id="regular_price">
                                             <p id="priceError" class="text-danger"></p> <!-- Placeholder for price error -->
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="mb-4">
                                             <label for="discount_price" class="form-label">Price After discount</label>
-                                            <input placeholder="₹" type="text" class="form-control" name="discount_price" id="discount_price">
+                                            <input placeholder="₹" type="text" class="form-control" name="discountPrice" id="discount_price">
                                             <p id="discountPriceError" class="text-danger"></p> <!-- Placeholder for discount price error -->
                                         </div>
                                     </div>
@@ -208,8 +208,9 @@
                                             <span class="form-check-label"> <%=category[i].name%> </span>
                                         </label>
                                         <%}}%>
-                                        <div id="categoryError" class="text-danger"></div> 
-                                </div>             
+                                        <div id="categoryError" class="text-danger"></div> <!-- Placeholder for category error -->
+                                </div>
+                            
                                 <!-- Media Section for Images -->
                                 <div class="mb-4">
                                     <label for="product_images" class="form-label">Images</label>
@@ -242,7 +243,7 @@
                 <div class="col-sm-6">
                     <script>
                     document.write(new Date().getFullYear())
-                    </script> ©, Evara - HTML Ecommerce Template .
+                </script> ©, Moment Store - JV .
                 </div>
                 <div class="col-sm-6">
                     <div class="text-sm-end">
@@ -258,85 +259,109 @@
     <script src="adminassets/js/vendors/perfect-scrollbar.js"></script>
     <script src="adminassets/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
-<script src="adminassets/js/main.js" type="text/javascript"></script>
-<script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const nameInput = document.getElementById('product_name');
-            const descriptionInput = document.getElementById('product_description');
-            const brandInput = document.getElementById('brand_name');
-            const genderInput = document.getElementById('gender_name');
-            const priceInput = document.getElementById('regular_price');
-            const discountPriceInput = document.getElementById('discount_price');
-            const stockInput = document.getElementById('stock_count');
-            const imagesInput = document.getElementById('product_images');
-        
-            document.getElementById('product_name').addEventListener('blur', () => validateInput('product_name', /^[A-Za-z][A-Za-z\s]*$/, 'nameError', 'Product Name'));
+    <script src="adminassets/js/main.js" type="text/javascript"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const nameInput = document.getElementById('product_name');
+    const descriptionInput = document.getElementById('product_description');
+    const brandInput =document.getElementById('brand_name');
+    const genderInput = document.getElementById('gender_name');
+    const priceInput = document.getElementById('regular_price');
+    const discountPriceInput = document.getElementById('discount_price');
+    const stockInput = document.getElementById('stock_count');
+    const imagesInput = document.getElementById('product_images');
 
-           function validateInput(inputId, regex, errorId, fieldName) {
-           const input = document.getElementById(inputId).value.trim();
-           const errorElement = document.getElementById(errorId);
-           if (!input.match(regex)) {
-            errorElement.textContent = `${fieldName} must start with a letter and contain only letters and spaces.`;
-            return false;
-           } else {
-           errorElement.textContent = '';
-           return true;
-            }
-           }        
-            brandInput.addEventListener('blur', () => validateInput('brand_name', /^\s*[A-Z][\s\S]{13,}$/, 'descriptionError', 'Brand'));
-            genderInput.addEventListener('blur', () => validateInput('gender_name', /^\s*[A-Z][\s\S]{13,}$/, 'descriptionError', 'Gender'));
-            descriptionInput.addEventListener('blur', () => validateInput('product_description', /^\s*[A-Z][\s\S]{13,}$/, 'descriptionError', 'Description'));
-            priceInput.addEventListener('blur', () => validateInput('regular_price', /^\d+(\.\d{1,2})?$/, 'priceError', 'Price'));
-            discountPriceInput.addEventListener('blur', () => validateInput('discount_price', /^\d+(\.\d{1,2})?$/, 'discountPriceError', 'Discount Price'));
-            stockInput.addEventListener('blur', () => validateInput('stock_count', /^[0-9]+$/, 'stockError', 'Stock'));
-        
-            imagesInput.addEventListener('change', function(e) {
-                validateImages(e, 'imagesError');
-            });
-        });
-        
-        function validateInput(inputId, pattern, errorId, errorMessage) {
-            const inputValue = document.getElementById(inputId).value.trim();
-            const errorElement = document.getElementById(errorId);
-        
-            if (inputValue === '') {
-                errorElement.innerText = errorMessage + ' is required.';
-                return false;
-            } else if (!pattern.test(inputValue)) {
-                errorElement.innerText = 'Please enter a valid ' + errorMessage.toLowerCase() + '.';
-                return false;
-            } else {
-                errorElement.innerText = '';
-                return true;
-            }
+    nameInput.addEventListener('blur', () => validateInput('product_name', /^([A-Za-z0-9.,]+\s?)+$/, 'nameError', 'Product Name'));
+
+    brandInput.addEventListener('blur', () => validateInput('brand_name', /^([A-Za-z0-9.,]+\s?)+$/, 'brandError', 'Brand Name'));
+
+    genderInput.addEventListener('blur', () => validateInput('gender_name', /^([A-Za-z0-9.,]+\s?)+$/, 'genderError', 'Gender Name'));
+
+    descriptionInput.addEventListener('blur', () => validateInput('product_description', /^\s*[A-Z][\s\S]{13,}$/, 'descriptionError', 'Description'));
+    priceInput.addEventListener('blur', () => validateInput('regular_price', /^\d+(\.\d{1,2})?$/, 'priceError', 'Price'));
+    discountPriceInput.addEventListener('blur', () => validateInput('discount_price', /^\d+(\.\d{1,2})?$/, 'discountPriceError', 'Discount Price'));
+    stockInput.addEventListener('blur', () => validateInput('stock_count', /^(100|[0-9]{1,2})$/, 'stockError', 'Stock'));
+
+    imagesInput.addEventListener('change', function(e) {
+        validateImages(e, 'imagesError');
+    });
+});
+
+function validateForm() {
+    const isValidName = validateInput('product_name', /^([A-Za-z0-9.,]+\s?)+$/, 'nameError', 'Product Name');
+    const isValidDescription = validateInput('product_description', /^\s*[A-Z][\s\S]{13,}$/, 'descriptionError', 'Description');
+    const isValidbrandName = validateInput('brand_name', /^([A-Za-z0-9.,]+\s?)+$/, 'brandError', 'Brand Name Name');
+    const isValidgenderName = validateInput('gender_name', /^([A-Za-z0-9.,]+\s?)+$/, 'genderError', 'Gender Name');
+    const isValidPrice = validateInput('regular_price', /^\d+(\.\d{1,2})?$/, 'priceError', 'Price');
+    const isValidDiscountPrice = validateInput('discount_price', /^\d+(\.\d{1,2})?$/, 'discountPriceError', 'Discount Price');
+    const isValidStock = validateInput('stock_count', /^(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-9]{2}|300)$/, 'stockError', 'Stock');
+    const isValidCategory = validateCategory(); // Validate category
+
+    if (!isValidName || !isValidDescription || !isValidPrice || !isValidDiscountPrice || !isValidStock || !isValidCategory) {
+        document.getElementById('mainError').innerText = 'Cannot submit form. Please Enter valid inputs.';
+        return false;
+    }
+    return true;
+}
+
+function validateInput(inputId, pattern, errorId, errorMessage) {
+    const inputValue = document.getElementById(inputId).value.trim();
+    const errorElement = document.getElementById(errorId);
+
+    if (inputValue === '') {
+        errorElement.innerText = errorMessage + ' is required.';
+        return false;
+    } else if (!pattern.test(inputValue)) {
+        errorElement.innerText = 'Please enter a valid ' + errorMessage.toLowerCase() + '.';
+        return false;
+    } else {
+        errorElement.innerText = '';
+        return true;
+    }
+}
+
+function validateImages(e, errorId) {
+    var fileInput = e.target;
+    var maxFiles = 3;
+    var validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp']; 
+
+    if (fileInput.files.length > maxFiles) {
+        alert(`You can only upload a maximum of ${maxFiles} files.`);
+        fileInput.value = '';
+        document.getElementById(errorId).textContent = `You can only upload a maximum of ${maxFiles} files.`;
+        return; 
+    }
+
+    for (var i = 0; i < fileInput.files.length; i++) {
+        var file = fileInput.files[i];
+        var extension = file.name.split('.').pop().toLowerCase();
+        if (!validExtensions.includes(extension)) {
+            alert('Please upload only image files (jpg, jpeg, png, gif, webp).');
+            fileInput.value = '';
+            document.getElementById(errorId).textContent = 'Please upload only image files (jpg, jpeg, png, gif, webp).';
+            return; 
         }
+    }
+
+    document.getElementById(errorId).textContent = '';
+}
+
+function validateCategory() {
+    const categoryInputs = document.querySelectorAll('input[name="category"]:checked');
+    const categoryError = document.getElementById('categoryError');
+
+    if (categoryInputs.length === 0) {
+        categoryError.innerText = 'Please select at least one category.';
+        return false;
+    } else {
+        categoryError.innerText = '';
+        return true;
+    }
+}
+
+    </script>
+    
         
-        function validateImages(e, errorId) {
-            var fileInput = e.target;
-            var maxFiles = 3;
-            var validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp']; 
-        
-            if (fileInput.files.length > maxFiles) {
-                alert(`You can only upload a maximum of ${maxFiles} files.`);
-                fileInput.value = '';
-                document.getElementById(errorId).textContent = `You can only upload a maximum of ${maxFiles} files.`;
-                return; 
-            }
-        
-            for (var i = 0; i < fileInput.files.length; i++) {
-                var file = fileInput.files[i];
-                var extension = file.name.split('.').pop().toLowerCase();
-                if (!validExtensions.includes(extension)) {
-                    alert('Please upload only image files (jpg, jpeg, png, gif, webp).');
-                    fileInput.value = '';
-                    document.getElementById(errorId).textContent = 'Please upload only image files (jpg, jpeg, png, gif, webp).';
-                    return; 
-                }
-            }
-        
-            document.getElementById(errorId).textContent = '';
-        }
-        
-</script>
 </body>
+
 </html>

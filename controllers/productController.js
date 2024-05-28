@@ -44,7 +44,6 @@ const addProductpage = async(req,res)=>{
 
 const addProduct = async (req, res) => {
     try {  
-
         if (!req.body.name || !req.body.description || !req.body.brand || !req.body.gender || !req.body.stock || !req.body.category || !req.body.price || !req.body.discountPrice || !req.files) {
             return res.redirect('/admin/product'); 
         }
